@@ -54,7 +54,10 @@ export default function ExploreApp() {
         </p>
       </header>
 
-      <ExploreMap />
+      <ExploreMap
+        selectedLocationId={selectedLocationId}
+        onSelectLocation={setSelectedLocationId}
+      />
 
       <section
         className={styles.selectedPanel}

@@ -93,8 +93,6 @@
 .mapFrameWrapper {
   position: relative;
   overflow: hidden;
-  min-height: 440px;
-  border: 3px solid rgba(255, 255, 255, 0.95);
   border-radius: 18px;
   background: #fff;
   box-shadow:
@@ -103,8 +101,49 @@
 }
 
 .mapImage {
+  display: block;
+  width: 100%;
+  height: auto;
   object-fit: contain;
   background: #fff;
+}
+
+.mapMarker {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.mapMarker:focus-visible {
+  outline: 2px solid #507a55;
+  outline-offset: 2px;
+  z-index: 2;
+}
+
+.mapMarkerDot {
+  width: 0.2875rem;
+  height: 0.2875rem;
+  border-radius: 50%;
+  background: #ff1493;
+  box-shadow: 0 0 0 1px white, 0 1px 3px rgb(25 45 30 / 45%);
+}
+
+.mapMarker:hover .mapMarkerDot,
+.mapMarkerSelected .mapMarkerDot {
+  background: #ff1493;
+  box-shadow:
+    0 0 0 2px rgb(80 122 85 / 55%),
+    0 0 0 3px white,
+    0 1px 3px rgb(25 45 30 / 45%);
 }
 
 .selectedPanel {
@@ -288,8 +327,9 @@
   }
 
   .mapFrameWrapper {
-    min-height: 360px;
+    width: 100%;
   }
+
 }
 
 @media (max-width: 480px) {
