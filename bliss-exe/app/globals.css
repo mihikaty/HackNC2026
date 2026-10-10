@@ -799,3 +799,108 @@ button:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+
+.focus-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.focus-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.focus-task-input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--window-border);
+  border-radius: 7px;
+  background: var(--glass);
+  color: var(--window-text);
+  font: inherit;
+  font-size: 13px;
+}
+
+.focus-task-input::placeholder {
+  color: var(--window-text);
+  opacity: 0.55;
+}
+
+.focus-presets,
+.focus-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.focus-preset,
+.focus-secondary {
+  padding: 8px 12px;
+  border: 1px solid var(--window-border);
+  border-radius: 6px;
+  background: var(--glass);
+  color: var(--window-text);
+  font-size: 12px;
+}
+
+.focus-preset-selected {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.focus-preset:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.focus-timer {
+  padding: 16px 0 4px;
+  font-size: clamp(42px, 9vw, 60px);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.focus-status {
+  margin: 0;
+  font-size: 12px;
+  text-align: center;
+  opacity: 0.78;
+}
+
+.focus-actions {
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.focus-primary {
+  padding: 10px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 7px;
+  background: linear-gradient(180deg, #84d8f8, #238cc9);
+  color: #fff;
+  font-weight: 800;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.focus-secondary:hover,
+.focus-preset:hover,
+.focus-primary:hover {
+  filter: brightness(1.06);
+}
+
+.focus-break-prompt {
+  margin-top: 5px;
+  padding: 13px;
+  border: 1px solid var(--window-border);
+  border-radius: 8px;
+  background: var(--glass);
+  font-size: 12px;
+}
+
+.focus-break-prompt p {
+  margin: 6px 0 0;
+  line-height: 1.55;
+}

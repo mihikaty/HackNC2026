@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FocusApp } from "@/components/FocusApp";
 
 const PROGRAMS = [
   {
@@ -190,20 +191,26 @@ export default function Home() {
             </div>
 
             <div className="window-content">
-              <div className="program-hero-icon">{program.icon}</div>
-              <h2>{program.name}</h2>
-              <p className="program-description">{program.description}</p>
+              {appId === "focus" ? (
+                <FocusApp />
+              ) : (
+                <>
+                  <div className="program-hero-icon">{program.icon}</div>
+                  <h2>{program.name}</h2>
+                  <p className="program-description">{program.description}</p>
 
-              <div className="program-placeholder">
-                <span className="placeholder-label">COMING TO THIS WINDOW</span>
-                <p>{program.next}</p>
-              </div>
+                  <div className="program-placeholder">
+                    <span className="placeholder-label">COMING TO THIS WINDOW</span>
+                    <p>{program.next}</p>
+                  </div>
 
-              {appId === "sprout" && (
-                <p className="sprout-note">
-                  Sprout&apos;s web chat and real iMessage connection will be
-                  added in the next development steps.
-                </p>
+                  {appId === "sprout" && (
+                    <p className="sprout-note">
+                      Sprout&apos;s web chat and real iMessage connection will be
+                      added in the next development steps.
+                    </p>
+                  )}
+                </>
               )}
             </div>
           </section>
