@@ -3,6 +3,7 @@
 import TouchGrassApp from "@/components/Touching/TouchGrassApp";
 import { useEffect, useState } from "react";
 import { FocusApp } from "@/components/FocusApp";
+import ExploreApp from "@/components/explore/ExploreApp";
 import NatureFmApp from "@/components/NatureFM";
 import ExploreApp from "@/app/components/explore/ExploreApp";
 
