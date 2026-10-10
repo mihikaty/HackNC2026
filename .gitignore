@@ -1,11 +1,3 @@
-node_modules/
-.env
-.env.*
-!.env.example
-dist/
-.next/
-coverage/
-*.log
-.DS_Store
-*.pem
-*.tsbuildinfo
+project1/package-lock.json
+project1/package.json
+project1/.gitignore
