@@ -1,8 +1,27 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 
-const TRACK = "/audio/music.mp3";
+const TRACKS = [
+  {
+    title: "Ambient Nature Loop",
+    source: "/audio/music.mp3",
+  },
+  {
+    title: "Morning Nature",
+    source: "/audio/music2short.mp3",
+  },
+  {
+    title: "Peaceful Outdoor Break",
+    source: "/audio/music3short.mp3",
+  },
+] as const;
 
 const REWIND_SECONDS = 15;
 const FAST_FORWARD_SECONDS = 15;
@@ -11,6 +30,10 @@ const SKIP_SECONDS = 30;
 export default function NatureFmApp() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Remembers whether playback should continue while switching tracks.
+  const shouldContinuePlayingRef = useRef(false);
+
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLooping, setIsLooping] = useState(true);
   const [duration, setDuration] = useState(0);
@@ -19,15 +42,23 @@ export default function NatureFmApp() {
   const [loaded, setLoaded] = useState(false);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
 
+  const currentTrack = TRACKS[currentTrackIndex];
   const canSeek = duration > 0;
 
   const timeLabel = useMemo(() => {
     const format = (seconds: number) => {
-      if (!Number.isFinite(seconds) || seconds < 0) return "00:00";
+      if (!Number.isFinite(seconds) || seconds < 0) {
+        return "00:00";
+      }
+
       const whole = Math.floor(seconds);
       const minutes = Math.floor(whole / 60);
       const secs = whole % 60;
-      return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+
+      return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(
+        2,
+        "0",
+      )}`;
     };
 
     return {
@@ -38,88 +69,136 @@ export default function NatureFmApp() {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
 
-    audio.loop = isLooping;
-  }, [isLooping]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio) {
+      return;
+    }
 
     audio.volume = volume;
   }, [volume]);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
 
-    const onLoadedMetadata = () => {
-      setDuration(audio.duration || 0);
-      setLoaded(true);
-      setCurrentTime(audio.currentTime || 0);
-      setPlaybackError(null);
-    };
+    if (!audio) {
+      return;
+    }
 
-    const onTimeUpdate = () => {
-      setCurrentTime(audio.currentTime || 0);
-    };
+    const shouldContinuePlaying = shouldContinuePlayingRef.current;
 
-    const onPlay = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
-    const onEnded = () => {
-      if (!audio.loop) {
-        setIsPlaying(false);
+    setLoaded(false);
+    setPlaybackError(null);
+    setDuration(0);
+    setCurrentTime(0);
+
+    const playWhenReady = () => {
+      if (!shouldContinuePlaying) {
+        return;
       }
-    };
-    const onError = () => {
-      setLoaded(false);
-      setIsPlaying(false);
-      setPlaybackError("The audio file could not be loaded. Please try again later.");
-    };
-    const onVolumeChange = () => {
-      setVolume(audio.volume);
+
+      void audio.play().catch((error: unknown) => {
+        shouldContinuePlayingRef.current = false;
+        setIsPlaying(false);
+
+        setPlaybackError(
+          error instanceof Error
+            ? `Playback failed: ${error.message}`
+            : "Playback failed. Please try again.",
+        );
+      });
     };
 
-    audio.addEventListener("loadedmetadata", onLoadedMetadata);
-    audio.addEventListener("timeupdate", onTimeUpdate);
-    audio.addEventListener("play", onPlay);
-    audio.addEventListener("pause", onPause);
-    audio.addEventListener("ended", onEnded);
-    audio.addEventListener("error", onError);
-    audio.addEventListener("volumechange", onVolumeChange);
+    audio.addEventListener("canplay", playWhenReady, { once: true });
+    audio.load();
 
     return () => {
-      audio.pause();
-      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
-      audio.removeEventListener("timeupdate", onTimeUpdate);
-      audio.removeEventListener("play", onPlay);
-      audio.removeEventListener("pause", onPause);
-      audio.removeEventListener("ended", onEnded);
-      audio.removeEventListener("error", onError);
-      audio.removeEventListener("volumechange", onVolumeChange);
+      audio.removeEventListener("canplay", playWhenReady);
     };
-  }, []);
+  }, [currentTrackIndex]);
 
-  useEffect(() => {
+  function handleLoadedMetadata() {
     const audio = audioRef.current;
 
-    return () => {
-      if (!audio) return;
-      audio.pause();
-    };
-  }, []);
+    if (!audio) {
+      return;
+    }
+
+    setDuration(audio.duration || 0);
+    setCurrentTime(audio.currentTime || 0);
+    setLoaded(true);
+    setPlaybackError(null);
+  }
+
+  function handleTimeUpdate() {
+    const audio = audioRef.current;
+
+    if (!audio) {
+      return;
+    }
+
+    setCurrentTime(audio.currentTime || 0);
+  }
+
+  function handlePlay() {
+    setIsPlaying(true);
+  }
+
+  function handlePause() {
+    /*
+     * Track changes may briefly trigger a pause event.
+     * Do not change the visible status during that transition.
+     */
+    if (!shouldContinuePlayingRef.current) {
+      setIsPlaying(false);
+    }
+  }
+
+  function handleAudioError() {
+    shouldContinuePlayingRef.current = false;
+    setLoaded(false);
+    setIsPlaying(false);
+
+    setPlaybackError(
+      "The audio file could not be loaded. Make sure it is inside public/audio.",
+    );
+  }
+
+  function handleEnded() {
+    const isLastTrack = currentTrackIndex === TRACKS.length - 1;
+
+    if (isLastTrack && !isLooping) {
+      shouldContinuePlayingRef.current = false;
+      setIsPlaying(false);
+      return;
+    }
+
+    // Continue playing automatically when the next song begins.
+    shouldContinuePlayingRef.current = true;
+
+    setCurrentTrackIndex((index) =>
+      index === TRACKS.length - 1 ? 0 : index + 1,
+    );
+  }
 
   async function togglePlayPause() {
     const audio = audioRef.current;
-    if (!audio) return;
+
+    if (!audio) {
+      return;
+    }
 
     if (audio.paused) {
+      // The user intentionally clicked Play.
+      shouldContinuePlayingRef.current = true;
       setPlaybackError(null);
+
       try {
         await audio.play();
+        setIsPlaying(true);
       } catch (error) {
+        shouldContinuePlayingRef.current = false;
         setIsPlaying(false);
+
         setPlaybackError(
           error instanceof Error
             ? `Playback failed: ${error.message}`
@@ -127,13 +206,39 @@ export default function NatureFmApp() {
         );
       }
     } else {
+      // The user intentionally clicked Pause.
+      shouldContinuePlayingRef.current = false;
       audio.pause();
+      setIsPlaying(false);
     }
+  }
+
+  function selectTrack(index: number) {
+    if (index < 0 || index >= TRACKS.length) {
+      return;
+    }
+
+    setCurrentTrackIndex(index);
+  }
+
+  function nextTrack() {
+    setCurrentTrackIndex((index) =>
+      index === TRACKS.length - 1 ? 0 : index + 1,
+    );
+  }
+
+  function previousTrack() {
+    setCurrentTrackIndex((index) =>
+      index === 0 ? TRACKS.length - 1 : index - 1,
+    );
   }
 
   function seekBy(deltaSeconds: number) {
     const audio = audioRef.current;
-    if (!audio || !canSeek) return;
+
+    if (!audio || !canSeek) {
+      return;
+    }
 
     const nextTime = Math.min(
       duration,
@@ -144,11 +249,26 @@ export default function NatureFmApp() {
     setCurrentTime(nextTime);
   }
 
-  function handleVolumeChange(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleVolumeChange(event: ChangeEvent<HTMLInputElement>) {
     const nextVolume = Number(event.target.value);
     const audio = audioRef.current;
+
     setVolume(nextVolume);
-    if (audio) audio.volume = nextVolume;
+
+    if (audio) {
+      audio.volume = nextVolume;
+    }
+  }
+
+  function restartTrack() {
+    const audio = audioRef.current;
+
+    if (!audio || !canSeek) {
+      return;
+    }
+
+    audio.currentTime = 0;
+    setCurrentTime(0);
   }
 
   return (
@@ -158,6 +278,7 @@ export default function NatureFmApp() {
           <p className="nature-player-eyebrow">Nature.fm</p>
           <h2>Frutiger Aero Soundscape</h2>
         </div>
+
         <span className="nature-player-status">
           {playbackError ? "Unavailable" : loaded ? "Ready" : "Loading..."}
         </span>
@@ -166,21 +287,26 @@ export default function NatureFmApp() {
       <section className="nature-track-card" aria-label="Current track">
         <div className="nature-track-meta">
           <span>Now playing</span>
-          <span className="nature-loop-status">Loop {isLooping ? "On" : "Off"}</span>
+
+          <span className="nature-loop-status">
+            Playlist loop {isLooping ? "On" : "Off"}
+          </span>
         </div>
 
         <div className="nature-track-details">
           <div className="nature-artwork" aria-hidden="true">
             🌿
           </div>
+
           <div className="nature-track-info">
-            <p className="nature-track-title">Ambient Nature Loop</p>
-            <p className="nature-track-source">Local audio · {TRACK}</p>
+            <p className="nature-track-title">{currentTrack.title}</p>
+
             <div className="nature-track-progress">
               <div className="nature-time-labels">
                 <span>{timeLabel.current}</span>
                 <span>{timeLabel.total}</span>
               </div>
+
               <div
                 className="nature-progress-track"
                 role="progressbar"
@@ -192,7 +318,10 @@ export default function NatureFmApp() {
                 <div
                   className="nature-progress-fill"
                   style={{
-                    width: duration > 0 ? `${(currentTime / duration) * 100}%` : "0%",
+                    width:
+                      duration > 0
+                        ? `${(currentTime / duration) * 100}%`
+                        : "0%",
                   }}
                 />
               </div>
@@ -207,16 +336,74 @@ export default function NatureFmApp() {
         </p>
       )}
 
-      <audio ref={audioRef} src={TRACK} preload="metadata" loop={isLooping} />
+      <audio
+        ref={audioRef}
+        src={currentTrack.source}
+        preload="metadata"
+        onLoadedMetadata={handleLoadedMetadata}
+        onTimeUpdate={handleTimeUpdate}
+        onPlay={handlePlay}
+        onPause={handlePause}
+        onEnded={handleEnded}
+        onError={handleAudioError}
+      />
+
+      <section className="nature-playlist" aria-label="Music playlist">
+        <div className="nature-playlist-header">
+          <strong>Playlist</strong>
+
+          <span className="nature-playlist-count">
+            {TRACKS.length} songs
+          </span>
+        </div>
+
+        <div className="nature-playlist-items">
+          {TRACKS.map((track, index) => (
+            <button
+              key={track.source}
+              type="button"
+              className={`nature-playlist-item ${
+                index === currentTrackIndex
+                  ? "nature-playlist-item-active"
+                  : ""
+              }`}
+              onClick={() => selectTrack(index)}
+              aria-current={
+                index === currentTrackIndex ? "true" : undefined
+              }
+            >
+              <span className="nature-playlist-song-title">
+                {track.title}
+              </span>
+
+              {index === currentTrackIndex && (
+                <span className="nature-playing-indicator">
+                  Playing
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </section>
 
       <div className="nature-player-controls">
         <div className="nature-seek-controls">
-          <button type="button" onClick={() => seekBy(-REWIND_SECONDS)} disabled={!canSeek}>
+          <button
+            type="button"
+            onClick={() => seekBy(-REWIND_SECONDS)}
+            disabled={!canSeek}
+          >
             ⏪ Rewind {REWIND_SECONDS}s
           </button>
-          <button type="button" onClick={() => seekBy(SKIP_SECONDS)} disabled={!canSeek}>
+
+          <button
+            type="button"
+            onClick={() => seekBy(SKIP_SECONDS)}
+            disabled={!canSeek}
+          >
             ⏭ Skip {SKIP_SECONDS}s
           </button>
+
           <button
             type="button"
             onClick={() => seekBy(FAST_FORWARD_SECONDS)}
@@ -224,6 +411,7 @@ export default function NatureFmApp() {
           >
             ⏩ Forward {FAST_FORWARD_SECONDS}s
           </button>
+
           <button
             type="button"
             className={isLooping ? "nature-loop-active" : ""}
@@ -235,23 +423,33 @@ export default function NatureFmApp() {
         </div>
 
         <div className="nature-playback-controls">
-          <button type="button" className="nature-play-button" onClick={togglePlayPause}>
-            {isPlaying ? "Pause" : "Play"}
+          <button type="button" onClick={previousTrack}>
+            Previous
           </button>
+
           <button
             type="button"
-            onClick={() => {
-              const audio = audioRef.current;
-              if (!audio) return;
-              audio.currentTime = 0;
-              setCurrentTime(0);
-            }}
+            className="nature-play-button"
+            onClick={togglePlayPause}
+          >
+            {isPlaying ? "Pause" : "Play"}
+          </button>
+
+          <button type="button" onClick={nextTrack}>
+            Next
+          </button>
+
+          <button
+            type="button"
+            onClick={restartTrack}
             disabled={!canSeek}
           >
             Restart
           </button>
+
           <label className="nature-volume-control">
             <span>Volume</span>
+
             <input
               type="range"
               min={0}
@@ -267,9 +465,11 @@ export default function NatureFmApp() {
 
       <aside className="nature-session-notes">
         <strong>Study session notes</strong>
+
         <p>
-          Use the looping nature track as background ambience while you work.
-          Rewind, skip, or fast-forward within the same audio file.
+          Use the looping nature playlist as background ambience while you
+          work. Choose a song or let the playlist move automatically to the
+          next track.
         </p>
       </aside>
     </div>
