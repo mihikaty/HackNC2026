@@ -4,6 +4,7 @@ import TouchGrassApp from "@/components/Touching/TouchGrassApp";
 import { useEffect, useState } from "react";
 import { FocusApp } from "@/components/FocusApp";
 import NatureFmApp from "@/components/NatureFM";
+import ExploreApp from "@/components/explore/ExploreApp";
 
 const PROGRAMS = [
   {
@@ -199,6 +200,8 @@ export default function Home() {
                 <FocusApp />
               ) : appId === "touchgrass" ? (
                 <TouchGrassApp />
+              ) : appId === "explore" ? (
+                <ExploreApp />
               ) : (
                 <>
                   <div className="program-hero-icon">{program.icon}</div>
