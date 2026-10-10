@@ -1,0 +1,299 @@
+.explore {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  color: #26372c;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #66866c;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.intro,
+.description {
+  margin: 0;
+  color: #617066;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.mapSection {
+  margin: 0;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.64);
+  box-shadow:
+    0 12px 24px rgba(52, 117, 102, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.mapHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.mapEyebrow {
+  margin: 0 0 4px;
+  color: #5d866e;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.mapHeader h3,
+.locationsHeading h3,
+.selectedPanel h3 {
+  margin: 0;
+  color: #263f34;
+  font-size: 24px;
+}
+
+.mapLink {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 13px;
+  border: 1px solid rgba(58, 116, 82, 0.35);
+  border-radius: 999px;
+  color: #326b45;
+  background: rgba(239, 255, 237, 0.9);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.mapLink:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
+.mapFrameWrapper {
+  position: relative;
+  overflow: hidden;
+  min-height: 440px;
+  border: 3px solid rgba(255, 255, 255, 0.95);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow:
+    0 8px 16px rgba(43, 105, 98, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.mapImage {
+  object-fit: contain;
+  background: #fff;
+}
+
+.selectedPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 1.15rem;
+  border: 1px solid #bcd6b9;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #f3faef, #fff);
+  box-shadow: 0 8px 20px rgb(42 69 48 / 8%);
+}
+
+.selectedHeader {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.selectedIcon {
+  display: grid;
+  width: 2.6rem;
+  height: 2.6rem;
+  place-items: center;
+  border-radius: 0.8rem;
+  background: #e3f0df;
+  font-size: 1.35rem;
+}
+
+.selectedPanel h3 {
+  font-size: 1.25rem;
+}
+
+.locations {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 0.85rem;
+}
+
+.card {
+  display: flex;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid #dce8d9;
+  border-radius: 0.9rem;
+  background: #fbfdf9;
+  box-shadow: 0 4px 12px rgb(42 69 48 / 6%);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.cardSelected {
+  border-color: #68986b;
+  box-shadow:
+    0 0 0 2px rgb(104 152 107 / 18%),
+    0 8px 18px rgb(42 69 48 / 10%);
+}
+
+.cardIcon {
+  display: grid;
+  flex: 0 0 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border-radius: 0.75rem;
+  background: #e9f3e5;
+  font-size: 1.25rem;
+}
+
+.cardBody {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+
+.cardBody h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.cardBody .description {
+  font-size: 0.85rem;
+}
+
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin: 0.2rem 0;
+}
+
+.details div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.details dt {
+  color: #718076;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.details dd {
+  margin: 0;
+  font-size: 0.78rem;
+}
+
+.cardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.2rem;
+}
+
+.action,
+.selectAction {
+  padding: 0.5rem 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.action {
+  background: #507a55;
+  color: white;
+}
+
+.action:hover {
+  background: #3e6544;
+}
+
+.selectAction {
+  border: 1px solid #9fbea0;
+  background: #f0f7ed;
+  color: #365d3c;
+}
+
+.selectAction[aria-pressed="true"] {
+  border-color: #507a55;
+  background: #e5f0e1;
+}
+
+.action:focus-visible,
+.selectAction:focus-visible,
+.mapLink:focus-visible {
+  outline: 3px solid #a8c9a5;
+  outline-offset: 2px;
+}
+
+.locationsSection {
+  margin-top: 0.25rem;
+}
+
+.locationsHeading {
+  margin-bottom: 14px;
+}
+
+@media (max-width: 640px) {
+  .mapSection {
+    padding: 13px;
+  }
+
+  .mapHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .mapLink {
+    align-self: flex-start;
+  }
+
+  .mapFrameWrapper {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 0.8rem;
+  }
+}

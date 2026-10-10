@@ -6,21 +6,29 @@ type Location = {
   description: string;
   seating: string;
   shade: string;
+  icon: string;
 };
 
 type LocationCardProps = {
   location: Location;
+  isSelected: boolean;
+  onSelect: (id: string) => void;
   onSendToSprout: (id: string) => void;
 };
 
 export default function LocationCard({
   location,
+  isSelected,
+  onSelect,
   onSendToSprout,
 }: LocationCardProps) {
   return (
-    <article className={styles.card}>
+    <article
+      className={`${styles.card} ${isSelected ? styles.cardSelected : ""}`}
+      aria-current={isSelected ? "true" : undefined}
+    >
       <div className={styles.cardIcon} aria-hidden="true">
-        🌿
+        {location.icon}
       </div>
       <div className={styles.cardBody}>
         <h3>{location.name}</h3>
@@ -35,14 +43,24 @@ export default function LocationCard({
             <dd>{location.shade}</dd>
           </div>
         </dl>
-        <button
-          className={styles.action}
-          onClick={() => onSendToSprout(location.id)}
-          type="button"
-        >
-          Send to Sprout
-          <span aria-hidden="true"> →</span>
-        </button>
+        <div className={styles.cardActions}>
+          <button
+            className={styles.selectAction}
+            onClick={() => onSelect(location.id)}
+            type="button"
+            aria-pressed={isSelected}
+          >
+            {isSelected ? "Selected" : "Select spot"}
+          </button>
+          <button
+            className={styles.action}
+            onClick={() => onSendToSprout(location.id)}
+            type="button"
+          >
+            Send to Sprout
+            <span aria-hidden="true"> →</span>
+          </button>
+        </div>
       </div>
     </article>
   );

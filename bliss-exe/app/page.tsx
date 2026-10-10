@@ -4,7 +4,7 @@ import TouchGrassApp from "@/components/Touching/TouchGrassApp";
 import { useEffect, useState } from "react";
 import { FocusApp } from "@/components/FocusApp";
 import NatureFmApp from "@/components/NatureFM";
-import ExploreApp from "@/components/explore/ExploreApp";
+import ExploreApp from "@/app/components/explore/ExploreApp";
 
 const PROGRAMS = [
   {
