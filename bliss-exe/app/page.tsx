@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FocusApp } from "@/components/FocusApp";
+import ExploreApp from "@/components/explore/ExploreApp";
 
 const PROGRAMS = [
   {
@@ -193,6 +194,8 @@ export default function Home() {
             <div className="window-content">
               {appId === "focus" ? (
                 <FocusApp />
+              ) : appId === "explore" ? (
+                <ExploreApp />
               ) : (
                 <>
                   <div className="program-hero-icon">{program.icon}</div>
