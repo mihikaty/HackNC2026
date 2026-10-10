@@ -134,7 +134,7 @@ export function FocusApp() {
 
       {completed && (
         <div className="focus-break-prompt">
-          <strong>You've earned a breather.</strong>
+          <strong>You&apos;ve earned a breather.</strong>
           <p>
             Find an outdoor spot in Explore.exe or pick a short activity
             in TouchGrass.exe.
