@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { FocusApp } from "@/components/FocusApp";
 import ExploreApp from "@/components/explore/ExploreApp";
+import NatureFmApp from "@/components/NatureFM";
 
 const PROGRAMS = [
   {
@@ -192,7 +193,9 @@ export default function Home() {
             </div>
 
             <div className="window-content">
-              {appId === "focus" ? (
+              {appId === "nature" ? (
+                <NatureFmApp />
+              ) : appId === "focus" ? (
                 <FocusApp />
               ) : appId === "explore" ? (
                 <ExploreApp />

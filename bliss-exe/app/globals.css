@@ -904,3 +904,237 @@ button:focus-visible {
   margin: 6px 0 0;
   line-height: 1.55;
 }
+
+.nature-player {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+  padding: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.92), transparent 36%),
+    linear-gradient(135deg, #d9f3ff, #c9f4e3 58%, #e4dcff);
+  color: #193b55;
+  box-shadow: 0 12px 32px rgba(15, 58, 87, 0.17), inset 0 1px 0 #fff;
+}
+
+.nature-player-header,
+.nature-track-meta,
+.nature-time-labels,
+.nature-playback-controls,
+.nature-volume-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.nature-player-header h2 {
+  margin: 3px 0 0;
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.nature-player-eyebrow {
+  margin: 0;
+  color: #17688d;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.nature-player-status,
+.nature-loop-status {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.nature-track-card,
+.nature-session-notes {
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.nature-track-meta {
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.nature-track-details {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nature-artwork {
+  display: grid;
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 14px;
+  background: linear-gradient(145deg, #fff, #a9e7e7);
+  box-shadow: inset 0 1px 2px #fff, 0 5px 14px rgba(24, 111, 135, 0.16);
+  font-size: 27px;
+}
+
+.nature-track-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.nature-track-title,
+.nature-track-source,
+.nature-session-notes p {
+  margin: 0;
+}
+
+.nature-track-title {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nature-track-source {
+  overflow: hidden;
+  margin-top: 2px;
+  font-size: 10px;
+  opacity: 0.75;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nature-track-progress {
+  margin-top: 10px;
+}
+
+.nature-time-labels {
+  margin-bottom: 4px;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.nature-progress-track {
+  height: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow: inset 0 1px 3px rgba(27, 93, 116, 0.15);
+}
+
+.nature-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #29c4c9, #4b9ee6, #57c98b);
+  transition: width 150ms linear;
+}
+
+.nature-player-controls {
+  display: grid;
+  gap: 10px;
+}
+
+.nature-seek-controls,
+.nature-playback-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+
+.nature-player button {
+  padding: 7px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.58);
+  color: #193b55;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: inset 0 1px 0 #fff, 0 3px 8px rgba(15, 58, 87, 0.1);
+  transition: transform 120ms ease, background 120ms ease;
+}
+
+.nature-player button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.nature-player button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.nature-player .nature-loop-active {
+  border-color: #8bdab9;
+  background: #baf0d4;
+}
+
+.nature-player .nature-play-button {
+  padding: 8px 17px;
+  background: linear-gradient(180deg, #9de5fb, #52b7e5);
+  font-size: 13px;
+}
+
+.nature-volume-control {
+  min-width: 130px;
+  flex: 1;
+  justify-content: flex-end;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.nature-volume-control input {
+  width: min(100%, 100px);
+  accent-color: #1683bd;
+}
+
+.nature-session-notes {
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.nature-session-notes p {
+  margin-top: 4px;
+}
+
+.nature-player-error {
+  margin: 0;
+  padding: 9px 11px;
+  border: 1px solid #d98883;
+  border-radius: 8px;
+  background: #fff1ef;
+  color: #812b28;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+@media (max-width: 640px) {
+  .nature-player {
+    padding: 14px;
+  }
+
+  .nature-player-header h2 {
+    font-size: 16px;
+  }
+
+  .nature-track-card,
+  .nature-session-notes {
+    padding: 11px;
+  }
+}
