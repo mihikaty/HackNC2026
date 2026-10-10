@@ -61,11 +61,13 @@ export default function Home() {
   useEffect(() => {
     const saved = window.localStorage.getItem("bliss-theme");
 
-    if (saved === "day" || saved === "night") {
-      setTheme(saved);
-    }
+    window.setTimeout(() => {
+      if (saved === "day" || saved === "night") {
+        setTheme(saved);
+      }
 
-    setThemeLoaded(true);
+      setThemeLoaded(true);
+    }, 0);
   }, []);
 
   useEffect(() => {
