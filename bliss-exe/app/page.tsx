@@ -1,5 +1,6 @@
 "use client";
 
+import TouchGrassApp from "@/components/Touching/TouchGrassApp";
 import { useEffect, useState } from "react";
 import { FocusApp } from "@/components/FocusApp";
 
@@ -193,6 +194,8 @@ export default function Home() {
             <div className="window-content">
               {appId === "focus" ? (
                 <FocusApp />
+              ) : appId === "touchgrass" ? (
+                <TouchGrassApp />
               ) : (
                 <>
                   <div className="program-hero-icon">{program.icon}</div>
