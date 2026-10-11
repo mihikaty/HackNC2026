@@ -199,7 +199,7 @@ export default function ExploreApp() {
       <header className="explore-topbar">
         <div className="explore-brand-mark" aria-hidden="true">✦</div>
         <div className="explore-heading-copy">
-          <p className="explore-eyebrow">BLISS FIELD GUIDE · CHAPEL HILL</p>
+          <p className="explore-eyebrow">ctrl + alt + study field guide · Chapel Hill</p>
           <h2 id="explore-heading">Find your study habitat</h2>
           <p className="explore-intro">Explore real campus geography, discover a place that fits your mood, and turn it into a plan with Sprout.</p>
         </div>

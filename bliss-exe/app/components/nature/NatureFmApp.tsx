@@ -154,7 +154,7 @@ export default function NatureFmApp() {
       <header className="nature-fm-heading">
         <div className="nature-fm-brandline">
           <span className="nature-fm-brand-icon" aria-hidden="true">♫</span>
-          <span>BLISS SOUND STUDIO</span>
+          <span>ctrl + alt + study sound studio</span>
           <span className="nature-fm-live-dot" />
           <span className="nature-fm-live-label">AUDIO SPACE</span>
         </div>
@@ -305,7 +305,7 @@ export default function NatureFmApp() {
       </section>
       <footer className="nature-fm-footer">
         <span>☼ Take it at your own pace</span>
-        <span>BLISS · NATURE.FM</span>
+        <span>ctrl + alt + study · nature.fm</span>
       </footer>
     </main>
   );

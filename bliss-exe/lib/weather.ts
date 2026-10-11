@@ -2,10 +2,16 @@
 // Used by /api/weather (Weather.exe) and /api/sprout/text (study-spot texts)
 // so both always agree.
 
+// Keep these ids in sync with STUDY_SPOTS in app/components/explore/ExploreApp.tsx:
+// Explore sends its spot id to /api/sprout/text, which looks it up here.
+// Coordinates match the Explore map pins (latitude, longitude).
 export const SPOTS = {
-  "coker-arboretum": { name: "Coker Arboretum", lat: 35.9067, lon: -79.0383 },
-  "sitterson-tables": { name: "Sitterson Hall", lat: 35.9094, lon: -79.0531 },
-  "quad-old-well": { name: "The Quad / Old Well", lat: 35.9124, lon: -79.0513 },
+  "coker-arboretum": { name: "Coker Arboretum", lat: 35.9137, lon: -79.0476 },
+  "sitterson-hall": { name: "Sitterson Hall", lat: 35.9109, lon: -79.0545 },
+  "old-well": { name: "Old Well & Polk Place", lat: 35.9122, lon: -79.0512 },
+  "davis-library": { name: "Davis Library", lat: 35.9096, lon: -79.0498 },
+  "wilson-library": { name: "Wilson Library", lat: 35.9098, lon: -79.0509 },
+  "student-union": { name: "Student Union", lat: 35.9108, lon: -79.0477 },
 } as const;
 
 export type SpotId = keyof typeof SPOTS;
