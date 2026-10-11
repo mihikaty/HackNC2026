@@ -39,6 +39,20 @@ const SPAWN_OFFSETS = [
   { x: 205, y: 110 },
 ];
 
+/* Pixel art icon. `unoptimized` stops Next from softening the edges. */
+function ProgramIcon({ src, size }: { src: string; size: number }) {
+  return (
+    <Image
+      src={src}
+      alt=""
+      width={size}
+      height={size}
+      unoptimized
+      draggable={false}
+    />
+  );
+}
+
 export default function Home() {
   const [theme, setTheme] = useState<Theme>("day");
   const [themeLoaded, setThemeLoaded] = useState(false);
@@ -48,8 +62,15 @@ export default function Home() {
   const [clock, setClock] = useState("--:--");
   const [date, setDate] = useState("");
   const zCounter = useRef(10);
-  const dragRef = useRef<{ id: ProgramId; startMX: number; startMY: number; startWX: number; startWY: number } | null>(null);
+  const dragRef = useRef<{
+    id: ProgramId;
+    startMX: number;
+    startMY: number;
+    startWX: number;
+    startWY: number;
+  } | null>(null);
 
+  /* Load the saved theme */
   useEffect(() => {
     const saved = window.localStorage.getItem("bliss-theme");
 
@@ -61,10 +82,12 @@ export default function Home() {
     return () => window.clearTimeout(loadTheme);
   }, []);
 
+  /* Save the theme */
   useEffect(() => {
     if (themeLoaded) window.localStorage.setItem("bliss-theme", theme);
   }, [theme, themeLoaded]);
 
+  /* Taskbar clock */
   useEffect(() => {
     const updateClock = () => {
       const now = new Date();
@@ -76,61 +99,99 @@ export default function Home() {
     return () => window.clearInterval(interval);
   }, []);
 
+  /* Window dragging */
   useEffect(() => {
     const onMove = (event: MouseEvent) => {
       if (!dragRef.current) return;
       const drag = dragRef.current;
-      setWindows((current) => current.map((win) => win.id === drag.id ? { ...win, x: drag.startWX + event.clientX - drag.startMX, y: drag.startWY + event.clientY - drag.startMY } : win));
+      setWindows((current) =>
+        current.map((win) =>
+          win.id === drag.id
+            ? {
+                ...win,
+                x: drag.startWX + event.clientX - drag.startMX,
+                y: drag.startWY + event.clientY - drag.startMY,
+              }
+            : win
+        )
+      );
     };
-    const onUp = () => { dragRef.current = null; };
+    const onUp = () => {
+      dragRef.current = null;
+    };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
-    return () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
   }, []);
 
   function bringToFront(id: ProgramId) {
     zCounter.current += 1;
-    setWindows((current) => current.map((win) => win.id === id ? { ...win, zIndex: zCounter.current, minimized: false } : win));
+    setWindows((current) =>
+      current.map((win) =>
+        win.id === id ? { ...win, zIndex: zCounter.current, minimized: false } : win
+      )
+    );
     setActiveId(id);
   }
 
   function openApp(id: ProgramId) {
     setStartMenuOpen(false);
-    if (windows.some((win) => win.id === id)) { bringToFront(id); return; }
-    const offset = window.innerWidth <= 640
-      ? { x: 12, y: 72 }
-      : SPAWN_OFFSETS[windows.length % SPAWN_OFFSETS.length];
+    if (windows.some((win) => win.id === id)) {
+      bringToFront(id);
+      return;
+    }
+    const offset =
+      window.innerWidth <= 640
+        ? { x: 12, y: 72 }
+        : SPAWN_OFFSETS[windows.length % SPAWN_OFFSETS.length];
     zCounter.current += 1;
-    setWindows((current) => [...current, { id, x: offset.x, y: offset.y, minimized: false, maximized: false, zIndex: zCounter.current }]);
+    setWindows((current) => [
+      ...current,
+      { id, x: offset.x, y: offset.y, minimized: false, maximized: false, zIndex: zCounter.current },
+    ]);
     setActiveId(id);
   }
 
   function closeApp(id: ProgramId) {
     setWindows((current) => current.filter((win) => win.id !== id));
-    setActiveId((current) => current === id ? null : current);
+    setActiveId((current) => (current === id ? null : current));
   }
 
   function minimizeWindow(id: ProgramId) {
-    setWindows((current) => current.map((win) => win.id === id ? { ...win, minimized: true } : win));
-    setActiveId((current) => current === id ? null : current);
+    setWindows((current) =>
+      current.map((win) => (win.id === id ? { ...win, minimized: true } : win))
+    );
+    setActiveId((current) => (current === id ? null : current));
   }
 
   function toggleMaximize(id: ProgramId) {
-    setWindows((current) => current.map((win) => win.id === id ? { ...win, maximized: !win.maximized } : win));
+    setWindows((current) =>
+      current.map((win) => (win.id === id ? { ...win, maximized: !win.maximized } : win))
+    );
   }
 
   function startDrag(event: React.MouseEvent, id: ProgramId) {
     const win = windows.find((item) => item.id === id);
     if (!win || win.maximized) return;
     bringToFront(id);
-    dragRef.current = { id, startMX: event.clientX, startMY: event.clientY, startWX: win.x, startWY: win.y };
+    dragRef.current = {
+      id,
+      startMX: event.clientX,
+      startMY: event.clientY,
+      startWX: win.x,
+      startWY: win.y,
+    };
     event.preventDefault();
   }
 
   function handleTaskbarClick(id: ProgramId) {
     const win = windows.find((item) => item.id === id);
     if (!win) return;
-    if (win.minimized || activeId !== id) bringToFront(id); else minimizeWindow(id);
+    if (win.minimized || activeId !== id) bringToFront(id);
+    else minimizeWindow(id);
   }
 
   return (

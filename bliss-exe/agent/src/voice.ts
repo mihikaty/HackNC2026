@@ -53,13 +53,47 @@ export function toSpeakable(text: string) {
     .trim();
 }
 
+const MORE_IN_TEXT = " There's more in my text.";
+
+/**
+ * Keep long replies within the character limit by speaking the first part:
+ * up to the last full sentence that fits (or the last word, if a sentence runs
+ * on), then a short pointer to the rest.
+ */
+export function fitToLimit(text: string, max = MAX_CHARS) {
+  if (text.length <= max) return text;
+
+  const room = max - MORE_IN_TEXT.length;
+  const head = text.slice(0, room);
+  const sentenceEnd = Math.max(
+    head.lastIndexOf(". "),
+    head.lastIndexOf("! "),
+    head.lastIndexOf("? "),
+  );
+  // Prefer a sentence boundary, but not one so early it leaves almost nothing.
+  const cut =
+    sentenceEnd >= room * 0.4
+      ? head.slice(0, sentenceEnd + 1)
+      : head.slice(0, head.lastIndexOf(" ") > 0 ? head.lastIndexOf(" ") : room);
+
+  return cut.trim() + MORE_IN_TEXT;
+}
+
 /** MP3 audio of `text` in Sprout's voice, or null if voice is off or failed. */
 export async function speak(text: string): Promise<Buffer | null> {
   if (!voiceEnabled()) return null;
 
   const speakable = toSpeakable(text);
 
-  if (!speakable || speakable.length > MAX_CHARS) return null;
+  if (!speakable) return null;
+
+  const spoken = fitToLimit(speakable);
+
+  if (spoken !== speakable) {
+    console.log(
+      `Voice note shortened: speaking ${spoken.length} of ${speakable.length} characters.`,
+    );
+  }
 
   try {
     client ??= new ElevenLabsClient();
@@ -67,7 +101,7 @@ export async function speak(text: string): Promise<Buffer | null> {
     const stream = await client.textToSpeech.convert(
       VOICE_ID,
       {
-        text: speakable,
+        text: spoken,
         modelId: MODEL_ID,
         outputFormat: "mp3_44100_128",
       },

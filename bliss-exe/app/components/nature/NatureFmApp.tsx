@@ -154,7 +154,7 @@ export default function NatureFmApp() {
       <header className="nature-fm-heading">
         <div className="nature-fm-brandline">
           <span className="nature-fm-brand-icon" aria-hidden="true">♫</span>
-          <span>BLISS SOUND STUDIO</span>
+          <span>ctrl + alt + study sound studio</span>
           <span className="nature-fm-live-dot" />
           <span className="nature-fm-live-label">AUDIO SPACE</span>
         </div>
@@ -175,6 +175,8 @@ export default function NatureFmApp() {
         <div className="nature-fm-main-column">
           <section className="nature-fm-now-playing glass-panel" aria-label="Current soundscape">
             <div className="nature-fm-artwork" style={{ backgroundImage: `url(${track.image})` }}>
+              {/* Plain <img>: local artwork with an onError fallback. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className="nature-fm-art-image" src={track.image} alt={`${track.title} artwork`} onError={(event) => { event.currentTarget.hidden = true; }} />
               <div className="nature-fm-art-glow" />
               <div className="nature-fm-art-sun" />
@@ -303,7 +305,7 @@ export default function NatureFmApp() {
       </section>
       <footer className="nature-fm-footer">
         <span>☼ Take it at your own pace</span>
-        <span>BLISS · NATURE.FM</span>
+        <span>ctrl + alt + study · nature.fm</span>
       </footer>
     </main>
   );

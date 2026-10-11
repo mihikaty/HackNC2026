@@ -93,7 +93,7 @@ function createInitialActiveQuests(completedIds: string[], preferredIds: string[
 }
 
 export default function TouchGrassApp() {
-  const { textMe, phone, textStatus } = useSprout();
+  const { textStatus } = useSprout();
   const [activeQuests, setActiveQuests] = useState<Quest[]>(questPool.slice(0, QUESTS_VISIBLE_AT_ONCE));
   const [completedQuestIds, setCompletedQuestIds] = useState<string[]>([]);
   const [gardenScore, setGardenScore] = useState(0);
@@ -104,37 +104,42 @@ export default function TouchGrassApp() {
   const [storageReady, setStorageReady] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const saved = JSON.parse(raw) as Partial<SavedProgress>;
-        const validQuestIds = new Set(questPool.map((quest) => quest.id));
-        const restoredCompleted = Array.isArray(saved.completedQuestIds)
-          ? saved.completedQuestIds.filter((id): id is string => typeof id === "string" && validQuestIds.has(id))
-          : [];
-        const restoredActive = createInitialActiveQuests(
-          restoredCompleted,
-          Array.isArray(saved.activeQuestIds) ? saved.activeQuestIds.filter((id): id is string => typeof id === "string") : [],
-        );
-        const validBingoIds = new Set(bingoSquares.map((square) => square.id));
-        const restoredBingo = Array.isArray(saved.completedBingoIds)
-          ? [...new Set(saved.completedBingoIds.filter((id): id is string => typeof id === "string" && validBingoIds.has(id)))]
-          : [];
-        const validLineIds = new Set(bingoLines.map((_, index) => String(index)));
-        const restoredLines = Array.isArray(saved.completedBingoLines)
-          ? [...new Set(saved.completedBingoLines.filter((id): id is string => typeof id === "string" && validLineIds.has(id)))]
-          : [];
+    // Load saved progress after mount so server and client render the same.
+    const restore = window.setTimeout(() => {
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw) as Partial<SavedProgress>;
+          const validQuestIds = new Set(questPool.map((quest) => quest.id));
+          const restoredCompleted = Array.isArray(saved.completedQuestIds)
+            ? saved.completedQuestIds.filter((id): id is string => typeof id === "string" && validQuestIds.has(id))
+            : [];
+          const restoredActive = createInitialActiveQuests(
+            restoredCompleted,
+            Array.isArray(saved.activeQuestIds) ? saved.activeQuestIds.filter((id): id is string => typeof id === "string") : [],
+          );
+          const validBingoIds = new Set(bingoSquares.map((square) => square.id));
+          const restoredBingo = Array.isArray(saved.completedBingoIds)
+            ? [...new Set(saved.completedBingoIds.filter((id): id is string => typeof id === "string" && validBingoIds.has(id)))]
+            : [];
+          const validLineIds = new Set(bingoLines.map((_, index) => String(index)));
+          const restoredLines = Array.isArray(saved.completedBingoLines)
+            ? [...new Set(saved.completedBingoLines.filter((id): id is string => typeof id === "string" && validLineIds.has(id)))]
+            : [];
 
-        setGardenScore(typeof saved.gardenScore === "number" && Number.isFinite(saved.gardenScore) ? Math.max(0, saved.gardenScore) : 0);
-        setCompletedQuestIds([...new Set(restoredCompleted)]);
-        setActiveQuests(restoredActive);
-        setCompletedBingoIds(restoredBingo);
-        setCompletedBingoLines(restoredLines);
+          setGardenScore(typeof saved.gardenScore === "number" && Number.isFinite(saved.gardenScore) ? Math.max(0, saved.gardenScore) : 0);
+          setCompletedQuestIds([...new Set(restoredCompleted)]);
+          setActiveQuests(restoredActive);
+          setCompletedBingoIds(restoredBingo);
+          setCompletedBingoLines(restoredLines);
+        }
+      } catch {
+        // If stored data is unavailable or malformed, continue with a clean game.
       }
-    } catch {
-      // If stored data is unavailable or malformed, continue with a clean game.
-    }
-    setStorageReady(true);
+      setStorageReady(true);
+    }, 0);
+
+    return () => window.clearTimeout(restore);
   }, []);
 
   useEffect(() => {
@@ -221,6 +226,20 @@ export default function TouchGrassApp() {
       : `Bingo square checked off. +${pointsEarned} garden points!`);
   }
 
+  // Clears all progress. The save effect then stores the fresh state.
+  function resetProgress() {
+    const confirmed = window.confirm("Reset all TouchGrass progress? This clears your points, quests, bingo and badges.");
+    if (!confirmed) return;
+
+    setGardenScore(0);
+    setCompletedQuestIds([]);
+    setActiveQuests(questPool.slice(0, QUESTS_VISIBLE_AT_ONCE));
+    setCompletedBingoIds([]);
+    setCompletedBingoLines([]);
+    setFilter("All");
+    setCelebration("Fresh start! Your garden is ready to grow again.");
+  }
+
   const sproutContext = `TouchGrass.exe progress. Garden score: ${gardenScore} points. Sprouts grown: ${sprouts}. ${pointsNeeded} points to next sprout. Quests completed: ${completedCount}/${questPool.length}. Bingo squares completed: ${completedBingoCount}/9; bingo lines completed: ${completedBingoLines.length}. Unlocked badges: ${unlockedBadges.map((badge) => badge.title).join(", ") || "none yet"}. Current category filter: ${filter}. Active quests: ${activeQuests.map((quest) => `${quest.title} (${quest.category}, ${quest.time}, +${quest.points} pts, at ${quest.location}): ${quest.description} Bonus: ${quest.bonusChallenge}`).join("; ") || "none"}. Remaining uncompleted quests: ${getAvailableQuests(completedQuestIds, activeQuests.map((quest) => quest.id)).map((quest) => `${quest.title} (${quest.category}, ${quest.time}, +${quest.points} pts)`).join("; ") || "none"}. Ask Sprout to recommend a fun, realistic next quest based on my time and progress, or turn one quest into a mini-adventure. Keep the suggestions safe, accessible, and on public campus paths/spaces.`;
   const sproutPrompt = sproutPick
     ? `Hey Sprout! Help me decide whether to do “${sproutPick.title}” or another TouchGrass quest. I have ${gardenScore} garden points and ${pointsNeeded} points until my next sprout. Suggest a fun way to do this quest and one optional bonus challenge.`
@@ -283,9 +302,14 @@ export default function TouchGrassApp() {
             <h2>Choose a quest</h2>
             <span>{visibleQuests.length} shown</span>
           </div>
-          <button className={styles.secondaryButton} type="button" onClick={surpriseMe}>
-            Surprise me
-          </button>
+          <div style={{ display: "flex", gap: 6 }}>
+            <button className={styles.secondaryButton} type="button" onClick={surpriseMe}>
+              Surprise me
+            </button>
+            <button className={styles.secondaryButton} type="button" onClick={resetProgress}>
+              Reset
+            </button>
+          </div>
         </div>
 
         <div className={styles.filterRow} aria-label="Filter quests">
@@ -309,15 +333,6 @@ export default function TouchGrassApp() {
                 </div>
                 <div className={styles.questActions}>
                   <span className={styles.points}>+{quest.points} pts</span>
-                  <button
-                    className={styles.completeButton}
-                    type="button"
-                    disabled={!phone}
-                    title={phone ? "Sprout will text and speak this quest to your phone" : "Turn on texts in Sprout.exe first"}
-                    onClick={() => textMe({ kind: "quest", questId: quest.id })}
-                  >
-                    Read to me
-                  </button>
                   <button className={styles.completeButton} type="button" onClick={() => completeQuest(quest.id)}>Done</button>
                 </div>
               </article>
@@ -376,4 +391,3 @@ export default function TouchGrassApp() {
     </main>
   );
 }
-
