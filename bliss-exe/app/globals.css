@@ -175,24 +175,31 @@ opacity: 0.95;
 }
 
 .desktop-status {
-padding: 8px 12px;
-border: 1px solid rgba(255, 255, 255, 0.65);
-border-radius: 999px;
-background: rgba(10, 89, 159, 0.22);
-backdrop-filter: blur(12px);
-font-size: 9px;
-font-weight: 800;
-letter-spacing: 0.1em;
+padding: 5px 10px;
+border: 0;
+border-radius: 0;
+background: #c0c0c0;
+color: #000000;
+font-family: Tahoma, Arial, sans-serif;
+font-size: 10px;
+font-weight: 700;
+letter-spacing: 0.06em;
+text-shadow: none;
+box-shadow:
+inset 1px 1px 0 #808080,
+inset -1px -1px 0 #ffffff,
+inset 2px 2px 0 #0a0a0a,
+inset -2px -2px 0 #dfdfdf;
 }
 
 .status-dot {
 display: inline-block;
-width: 7px;
-height: 7px;
+width: 8px;
+height: 8px;
 margin-right: 7px;
-border-radius: 50%;
-background: #a6ffb5;
-box-shadow: 0 0 8px rgba(166, 255, 181, 0.9);
+border: 1px solid #004400;
+background: #2bd02b;
+box-shadow: inset 1px 1px 0 #b8ffb8;
 }
 
 /* =========================================================
@@ -501,7 +508,10 @@ scrollbar-width: thin;
 /* The classic app surfaces own their full content area. */
 .app-window.focus-window .window-content,
 .app-window.explore-window .window-content,
-.app-window.nature-window .window-content {
+.app-window.nature-window .window-content,
+.app-window.touchgrass-window .window-content,
+.app-window.weather-window .window-content,
+.app-window.sprout-window .window-content {
 padding: 0;
 background: #c0c0c0;
 color: #222;
@@ -509,7 +519,10 @@ color: #222;
 
 .desktop[data-theme="night"] .app-window.focus-window .window-content,
 .desktop[data-theme="night"] .app-window.explore-window .window-content,
-.desktop[data-theme="night"] .app-window.nature-window .window-content {
+.desktop[data-theme="night"] .app-window.nature-window .window-content,
+.desktop[data-theme="night"] .app-window.touchgrass-window .window-content,
+.desktop[data-theme="night"] .app-window.weather-window .window-content,
+.desktop[data-theme="night"] .app-window.sprout-window .window-content {
 background: #1f2937;
 color: #f3f4f6;
 }
@@ -776,39 +789,70 @@ inset 0 1px 0 rgba(255, 255, 255, 0.35);
 
 .start-button {
 display: flex;
-height: 33px;
+height: 30px;
 flex: 0 0 auto;
 align-items: center;
 gap: 6px;
-padding: 0 15px 0 10px;
-border: 1px solid #c7f3bd;
-border-radius: 16px 8px 8px 16px;
-background: linear-gradient(
-180deg,
-#8ce65b 0%,
-#45bb38 45%,
-#218a2b 100%
-);
-color: white;
+padding: 0 10px 0 7px;
+border: 0;
+border-radius: 0;
+background: #c0c0c0;
+color: #000000;
+font-family: Tahoma, Arial, sans-serif;
+font-size: 13px;
 font-weight: 800;
-font-style: italic;
-text-shadow: 0 1px 2px rgba(0, 50, 0, 0.65);
+cursor: pointer;
 box-shadow:
-inset 0 1px 2px rgba(255, 255, 255, 0.8),
-0 1px 2px rgba(0, 30, 80, 0.25);
-}
-
-.start-button:hover {
-filter: brightness(1.08);
+inset -1px -1px 0 #0a0a0a,
+inset 1px 1px 0 #ffffff,
+inset -2px -2px 0 #808080,
+inset 2px 2px 0 #dfdfdf;
 }
 
 .start-button:active,
 .start-button[aria-expanded="true"] {
-background: linear-gradient(180deg, #238c30, #4bb73a);
+padding: 2px 9px 0 8px;
+box-shadow:
+inset 1px 1px 0 #0a0a0a,
+inset -1px -1px 0 #ffffff,
+inset 2px 2px 0 #808080,
+inset -2px -2px 0 #dfdfdf;
 }
 
-.start-orb {
-font-size: 17px;
+.start-button:focus-visible {
+outline: 1px dotted #000000;
+outline-offset: -5px;
+}
+
+/* A generic four-pane window mark, drawn in CSS. */
+.start-flag {
+display: grid;
+width: 16px;
+height: 16px;
+flex: 0 0 auto;
+grid-template-columns: 1fr 1fr;
+gap: 1px;
+transform: skewY(-6deg);
+}
+
+.start-flag i {
+display: block;
+}
+
+.start-flag i:nth-child(1) {
+background: #e8412c;
+}
+
+.start-flag i:nth-child(2) {
+background: #43b02a;
+}
+
+.start-flag i:nth-child(3) {
+background: #1f6fd0;
+}
+
+.start-flag i:nth-child(4) {
+background: #f5c400;
 }
 
 .taskbar-divider {
@@ -887,14 +931,22 @@ font-weight: 800;
 display: flex;
 min-width: 65px;
 flex: 0 0 auto;
+flex-direction: column;
 align-items: center;
 justify-content: center;
-padding: 6px 8px;
+gap: 1px;
+line-height: 1.15;
+padding: 3px 8px;
 border-left: 1px solid rgba(255, 255, 255, 0.25);
 color: white;
 font-size: 12px;
 text-align: center;
 text-shadow: 0 1px 2px rgba(0, 20, 60, 0.5);
+}
+
+.system-clock-date {
+font-size: 10px;
+opacity: 0.9;
 }
 
 /* =========================================================
@@ -1690,8 +1742,9 @@ padding: 0 8px;
 font-size: 12px;
 }
 
-.start-orb {
-font-size: 15px;
+.start-flag {
+width: 14px;
+height: 14px;
 }
 
 .taskbar-divider {
@@ -1720,8 +1773,12 @@ font-size: 9px;
 
 .system-clock {
 min-width: 43px;
-padding: 6px 3px;
+padding: 3px 3px;
 font-size: 10px;
+}
+
+.system-clock-date {
+font-size: 9px;
 }
 
 .active-app-hint {
@@ -2037,4 +2094,120 @@ transition-duration: 0.01ms !important;
   gap: 8px;
   font-size: 11px;
   opacity: 0.95;
+}
+
+/* ---------- Nature.fm weather ambience ---------- */
+
+.ambience-panel {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 9px;
+  padding: 9px;
+  border: 0;
+  background: var(--nature-face, #dfdfdf);
+  color: #222;
+  font-size: 11px;
+  box-shadow:
+    var(--border-window-outer, inset -1px -1px #0a0a0a, inset 1px 1px #fff),
+    var(--border-window-inner, inset -2px -2px #808080, inset 2px 2px #dfdfdf);
+}
+
+.ambience-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.ambience-title span {
+  font-size: 10px;
+  color: #404040;
+}
+
+.ambience-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.ambience-row label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.ambience-row select {
+  padding: 2px 4px;
+  font: inherit;
+}
+
+.ambience-note {
+  margin: 0;
+  font-size: 11px;
+}
+
+/* ---------- Win98-style sliders for Nature.fm volume controls ----------
+   The theme draws these as a 2px line with no visible handle, which is nearly
+   impossible to grab. Give them a real track, a handle and a taller hit area. */
+
+.nature-fm input[type="range"],
+.ambience-panel input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 22px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.nature-fm input[type="range"]::-webkit-slider-runnable-track,
+.ambience-panel input[type="range"]::-webkit-slider-runnable-track {
+  box-sizing: border-box;
+  height: 6px;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #ffffff;
+  box-shadow: inset 1px 1px 0 #0a0a0a;
+}
+
+.nature-fm input[type="range"]::-webkit-slider-thumb,
+.ambience-panel input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 20px;
+  margin-top: -8px;
+  border: 0;
+  border-radius: 0;
+  background: #c0c0c0;
+  box-shadow:
+    inset -1px -1px 0 #0a0a0a,
+    inset 1px 1px 0 #ffffff,
+    inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #dfdfdf;
+}
+
+.nature-fm input[type="range"]::-moz-range-track,
+.ambience-panel input[type="range"]::-moz-range-track {
+  box-sizing: border-box;
+  height: 6px;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #ffffff;
+}
+
+.nature-fm input[type="range"]::-moz-range-thumb,
+.ambience-panel input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 20px;
+  border: 0;
+  border-radius: 0;
+  background: #c0c0c0;
+  box-shadow:
+    inset -1px -1px 0 #0a0a0a,
+    inset 1px 1px 0 #ffffff,
+    inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #dfdfdf;
 }

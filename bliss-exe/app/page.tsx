@@ -9,7 +9,7 @@ import ExploreApp from "@/app/components/explore/ExploreApp";
 import SproutApp from "@/app/components/sprout/SproutApp";
 import { SproutProvider } from "@/app/components/sprout/SproutProvider";
 import WeatherApp from "@/app/components/weather/WeatherApp";
-import Screensaver from "@/components/screensaver/Screensaver";
+import Screensaver from "@/app/components/screensaver/Screensaver";
 
 const PROGRAMS = [
   { id: "focus", name: "Focus.exe", icon: "/icons/pomodoro.jpg", description: "Your personal study timer and task space.", next: "Build a focus timer, task list, and session history here." },
@@ -46,6 +46,7 @@ export default function Home() {
   const [activeId, setActiveId] = useState<ProgramId | null>(null);
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [clock, setClock] = useState("--:--");
+  const [date, setDate] = useState("");
   const zCounter = useRef(10);
   const dragRef = useRef<{ id: ProgramId; startMX: number; startMY: number; startWX: number; startWY: number } | null>(null);
 
@@ -65,7 +66,11 @@ export default function Home() {
   }, [theme, themeLoaded]);
 
   useEffect(() => {
-    const updateClock = () => setClock(new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
+    const updateClock = () => {
+      const now = new Date();
+      setClock(now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
+      setDate(now.toLocaleDateString([], { month: "numeric", day: "numeric", year: "2-digit" }));
+    };
     updateClock();
     const interval = window.setInterval(updateClock, 30_000);
     return () => window.clearInterval(interval);

@@ -1,393 +1,379 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./TouchGrassApp.module.css";
 import { SendToSproutButton } from "@/app/components/sprout/SendToSproutButton";
+import { useSprout } from "@/app/components/sprout/SproutProvider";
+import { QUESTS, type Quest, type QuestCategory } from "@/lib/quests";
 
-type Quest = {
+type QuestFilter = "All" | QuestCategory;
+
+
+type BingoSquare = {
+  id: string;
+  title: string;
+  detail: string;
+};
+
+type SavedProgress = {
+  gardenScore: number;
+  completedQuestIds: string[];
+  activeQuestIds: string[];
+  completedBingoIds: string[];
+  completedBingoLines: string[];
+};
+
+const STORAGE_KEY = "touchgrass-progress-v2";
+const QUESTS_VISIBLE_AT_ONCE = 4;
+const POINTS_PER_SPROUT = 20;
+
+const questPool = QUESTS;
+
+const plantFacts = [
+  "Coker Arboretum opened in 1903 and spans about five acres.",
+  "Coker Arboretum has a rich mix of trees and shrubs.",
+  "UNC’s Botanical Garden focuses on southeastern native plants.",
+  "The Botanical Garden includes water gardens and carnivorous plants.",
+  "Wild Venus flytraps are native to a small area of coastal North Carolina.",
+  "Carolina Community Garden brings people together to grow food.",
+  "Battle Park is a wooded natural area beside campus.",
+];
+
+const bingoSquares: BingoSquare[] = [
+  { id: "blue", title: "Find Carolina Blue", detail: "Spot the campus color." },
+  { id: "bird", title: "Hear a Bird", detail: "Spot or hear one." },
+  { id: "shade", title: "Find Shade", detail: "Notice the cooler spot." },
+  { id: "landmark", title: "Visit a Landmark", detail: "Pause at a campus landmark." },
+  { id: "free", title: "Take a 3-Minute Pause", detail: "Breathe and look around." },
+  { id: "colors", title: "Find 5 Colors", detail: "Look around, no picking." },
+  { id: "leaves", title: "Compare Leaves", detail: "Find two different shapes." },
+  { id: "sound", title: "Notice 3 Sounds", detail: "Pause and listen." },
+  { id: "newspot", title: "Try a New Route", detail: "Take a different campus path." },
+];
+
+const bingoLines = [
+  ["blue", "bird", "shade"], ["landmark", "free", "colors"], ["leaves", "sound", "newspot"],
+  ["blue", "landmark", "leaves"], ["bird", "free", "sound"], ["shade", "colors", "newspot"],
+  ["blue", "free", "newspot"], ["shade", "free", "leaves"],
+] as const;
+
+type BadgeDefinition = {
   id: string;
   title: string;
   description: string;
-  icon: string;
-  points: number;
+  unlocked: (quests: number, score: number, bingo: number, lines: number) => boolean;
 };
 
-const QUESTS_VISIBLE_AT_ONCE = 4;
-
-const questPool: Quest[] = [
-  {
-    id: "find-carolina-blue",
-    title: "Find Carolina Blue",
-    description: "Spot something Carolina blue outdoors on campus.",
-    icon: "💙",
-    points: 5,
-  },
-  {
-    id: "visit-old-well",
-    title: "Visit the Old Well",
-    description:
-      "Notice one detail near the Old Well that you have not seen before.",
-    icon: "⛲",
-    points: 5,
-  },
-  {
-    id: "coker-arboretum",
-    title: "Walk Through Coker Arboretum",
-    description:
-      "Take a short walk through the Arboretum and notice one plant.",
-    icon: "🌿",
-    points: 15,
-  },
-  {
-    id: "new-campus-spot",
-    title: "Explore a New Campus Spot",
-    description:
-      "Visit an outdoor UNC location you have not explored recently.",
-    icon: "🧭",
-    points: 20,
-  },
-  {
-    id: "mccorkle-moment",
-    title: "Take a McCorkle Moment",
-    description:
-      "Pause outside near McCorkle Place and notice three sounds.",
-    icon: "🌳",
-    points: 10,
-  },
-  {
-    id: "bell-tower-sound-check",
-    title: "Bell Tower Sound Check",
-    description:
-      "Spend a few minutes outside noticing sounds near the Bell Tower.",
-    icon: "🔔",
-    points: 10,
-  },
-  {
-    id: "campus-color-collector",
-    title: "Collect Campus Colors",
-    description:
-      "Find five different colors in the outdoor spaces around UNC.",
-    icon: "🎨",
-    points: 15,
-  },
-  {
-    id: "carolina-sky-check",
-    title: "Take a Carolina Sky Check",
-    description:
-      "Spend a few minutes outside noticing the sky, clouds, or sunlight.",
-    icon: "☁️",
-    points: 10,
-  },
-  {
-    id: "battle-park-break",
-    title: "Take a Battle Park Break",
-    description:
-      "Spend a short, comfortable outdoor break near Battle Park.",
-    icon: "🍃",
-    points: 20,
-  },
-  {
-    id: "campus-tree-check",
-    title: "Compare Three Campus Trees",
-    description:
-      "Notice how three campus trees differ in size, shape, or texture.",
-    icon: "🌲",
-    points: 15,
-  },
-  {
-    id: "outdoor-reading-break",
-    title: "Read Outside",
-    description:
-      "Read a few pages somewhere outdoors on or near campus.",
-    icon: "📖",
-    points: 15,
-  },
-  {
-    id: "tar-heel-walk",
-    title: "Take a Tar Heel Walk",
-    description:
-      "Take a relaxed walk through a campus path or green space.",
-    icon: "🚶",
-    points: 20,
-  },
-];
-
-type PlantFact = {
-  text: string;
-  icon: string;
-};
-
-const plantFacts: PlantFact[] = [
-  {
-    icon: "🌳",
-    text: "Coker Arboretum was created in 1903 and covers about five acres of UNC-Chapel Hill campus.",
-  },
-  {
-    icon: "🌿",
-    text: "Coker Arboretum contains more than 500 species of trees, plants, and shrubs.",
-  },
-  {
-    icon: "🌱",
-    text: "The North Carolina Botanical Garden is part of UNC-Chapel Hill and focuses on southeastern native plants.",
-  },
-  {
-    icon: "🪴",
-    text: "UNC’s Botanical Garden includes collections featuring native plants, water gardens, and carnivorous plants.",
-  },
-  {
-    icon: "🪰",
-    text: "Venus flytraps naturally grow only within a limited region near Wilmington, North Carolina.",
-  },
-  {
-    icon: "🥕",
-    text: "The Carolina Community Garden brings members of the UNC community together to grow and share produce.",
-  },
-  {
-    icon: "🍃",
-    text: "Battle Park is a forested natural area near campus that provides habitat for native plant and animal species.",
-  },
+const badgeDefinitions: BadgeDefinition[] = [
+  { id: "first-step", title: "First Fresh Air", description: "Complete your first quest.", unlocked: (quests) => quests >= 1 },
+  { id: "campus-roamer", title: "Campus Roamer", description: "Complete 5 quests.", unlocked: (quests) => quests >= 5 },
+  { id: "bingo-beginner", title: "Bingo Beginner", description: "Check off 3 bingo squares.", unlocked: (_quests, _score, bingo) => bingo >= 3 },
+  { id: "nature-scout", title: "Nature Scout", description: "Complete 10 quests.", unlocked: (quests) => quests >= 10 },
+  { id: "garden-grower", title: "Garden Grower", description: "Grow 5 sprouts.", unlocked: (_quests, score) => Math.floor(score / POINTS_PER_SPROUT) >= 5 },
+  { id: "bingo-master", title: "Bingo Master", description: "Complete a full bingo line.", unlocked: (_quests, _score, _bingo, lines) => lines >= 1 },
 ];
 
 function getRandomQuest(quests: Quest[]): Quest | null {
-  if (quests.length === 0) {
-    return null;
-  }
+  if (quests.length === 0) return null;
+  return quests[Math.floor(Math.random() * quests.length)];
+}
 
-  const randomIndex = Math.floor(Math.random() * quests.length);
+function getAvailableQuests(completedIds: string[], activeIds: string[]) {
+  return questPool.filter((quest) => !completedIds.includes(quest.id) && !activeIds.includes(quest.id));
+}
 
-  return quests[randomIndex];
+function createInitialActiveQuests(completedIds: string[], preferredIds: string[] = []) {
+  const byId = new Map(questPool.map((quest) => [quest.id, quest]));
+  const preferred = preferredIds
+    .map((id) => byId.get(id))
+    .filter((quest): quest is Quest => Boolean(quest) && !completedIds.includes(quest!.id));
+  const uniquePreferred = preferred.filter((quest, index, array) => array.findIndex((candidate) => candidate.id === quest.id) === index);
+  const remaining = questPool.filter((quest) => !completedIds.includes(quest.id) && !uniquePreferred.some((active) => active.id === quest.id));
+  return [...uniquePreferred, ...remaining].slice(0, QUESTS_VISIBLE_AT_ONCE);
 }
 
 export default function TouchGrassApp() {
-  const [activeQuests, setActiveQuests] = useState<Quest[]>(
-    questPool.slice(0, QUESTS_VISIBLE_AT_ONCE),
-  );
+  const { textMe, phone, textStatus } = useSprout();
+  const [activeQuests, setActiveQuests] = useState<Quest[]>(questPool.slice(0, QUESTS_VISIBLE_AT_ONCE));
+  const [completedQuestIds, setCompletedQuestIds] = useState<string[]>([]);
+  const [gardenScore, setGardenScore] = useState(0);
+  const [completedBingoIds, setCompletedBingoIds] = useState<string[]>([]);
+  const [completedBingoLines, setCompletedBingoLines] = useState<string[]>([]);
+  const [filter, setFilter] = useState<QuestFilter>("All");
+  const [celebration, setCelebration] = useState("");
+  const [storageReady, setStorageReady] = useState(false);
 
-  const [completedQuestIds, setCompletedQuestIds] = useState<string[]>(
-    [],
-  );
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw) as Partial<SavedProgress>;
+        const validQuestIds = new Set(questPool.map((quest) => quest.id));
+        const restoredCompleted = Array.isArray(saved.completedQuestIds)
+          ? saved.completedQuestIds.filter((id): id is string => typeof id === "string" && validQuestIds.has(id))
+          : [];
+        const restoredActive = createInitialActiveQuests(
+          restoredCompleted,
+          Array.isArray(saved.activeQuestIds) ? saved.activeQuestIds.filter((id): id is string => typeof id === "string") : [],
+        );
+        const validBingoIds = new Set(bingoSquares.map((square) => square.id));
+        const restoredBingo = Array.isArray(saved.completedBingoIds)
+          ? [...new Set(saved.completedBingoIds.filter((id): id is string => typeof id === "string" && validBingoIds.has(id)))]
+          : [];
+        const validLineIds = new Set(bingoLines.map((_, index) => String(index)));
+        const restoredLines = Array.isArray(saved.completedBingoLines)
+          ? [...new Set(saved.completedBingoLines.filter((id): id is string => typeof id === "string" && validLineIds.has(id)))]
+          : [];
 
-  const [gardenScore, setGardenScore] = useState<number>(0);
+        setGardenScore(typeof saved.gardenScore === "number" && Number.isFinite(saved.gardenScore) ? Math.max(0, saved.gardenScore) : 0);
+        setCompletedQuestIds([...new Set(restoredCompleted)]);
+        setActiveQuests(restoredActive);
+        setCompletedBingoIds(restoredBingo);
+        setCompletedBingoLines(restoredLines);
+      }
+    } catch {
+      // If stored data is unavailable or malformed, continue with a clean game.
+    }
+    setStorageReady(true);
+  }, []);
 
-  const sprouts = Math.floor(gardenScore / 20);
+  useEffect(() => {
+    if (!storageReady) return;
+    const progress: SavedProgress = {
+      gardenScore,
+      completedQuestIds,
+      activeQuestIds: activeQuests.map((quest) => quest.id),
+      completedBingoIds,
+      completedBingoLines,
+    };
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    } catch {
+      // The game still works if browser storage is disabled.
+    }
+  }, [storageReady, gardenScore, completedQuestIds, activeQuests, completedBingoIds, completedBingoLines]);
 
-  const currentPlantFact =
-    sprouts === 0
-      ? {
-         icon: "🌱",
-         text: "Earn your first sprout by collecting 20 garden points.",
-        }
-      : plantFacts[(sprouts - 1) % plantFacts.length];
-
-
+  const sprouts = Math.floor(gardenScore / POINTS_PER_SPROUT);
+  const pointsTowardNextSprout = gardenScore % POINTS_PER_SPROUT;
+  const pointsNeeded = POINTS_PER_SPROUT - pointsTowardNextSprout;
+  const sproutProgress = (pointsTowardNextSprout / POINTS_PER_SPROUT) * 100;
   const completedCount = completedQuestIds.length;
+  const completedBingoCount = completedBingoIds.length;
+  const currentPlantFact = sprouts === 0
+    ? "Quests and bingo both help your garden grow."
+    : plantFacts[(sprouts - 1) % plantFacts.length];
 
-  const replacementQuestsAvailable = questPool.filter(
-    (quest) =>
-      !completedQuestIds.includes(quest.id) &&
-      !activeQuests.some(
-        (activeQuest) => activeQuest.id === quest.id,
-      ),
-  );
+  const replacementQuestsAvailable = getAvailableQuests(completedQuestIds, activeQuests.map((quest) => quest.id));
+  const allQuestsComplete = activeQuests.length === 0 && replacementQuestsAvailable.length === 0 && completedCount === questPool.length;
+  const visibleQuests = filter === "All" ? activeQuests : activeQuests.filter((quest) => quest.category === filter);
+  const sproutPick = useMemo(() => {
+    const matchingQuest = filter === "All" ? null : activeQuests.find((quest) => quest.category === filter);
+    return matchingQuest ?? activeQuests[0] ?? getRandomQuest(getAvailableQuests(completedQuestIds, activeQuests.map((quest) => quest.id)));
+  }, [filter, activeQuests, completedQuestIds]);
+
+  const unlockedBadges = badgeDefinitions.filter((badge) => badge.unlocked(completedCount, gardenScore, completedBingoCount, completedBingoLines.length));
+  const nextBadge = badgeDefinitions.find((badge) => !unlockedBadges.some((unlocked) => unlocked.id === badge.id));
 
   function completeQuest(questId: string) {
-    const completedQuest = activeQuests.find(
-      (quest) => quest.id === questId,
+    const completedQuest = activeQuests.find((quest) => quest.id === questId);
+    if (!completedQuest || completedQuestIds.includes(questId)) return;
+
+    const nextCompletedIds = [...completedQuestIds, questId];
+    const remainingQuests = activeQuests.filter((quest) => quest.id !== questId);
+    const replacements = questPool.filter(
+      (quest) => !nextCompletedIds.includes(quest.id) && !remainingQuests.some((activeQuest) => activeQuest.id === quest.id),
     );
-
-    if (!completedQuest) {
-      return;
-    }
-
-    const nextCompletedQuestIds = [
-      ...completedQuestIds,
-      completedQuest.id,
-    ];
-
-    const replacementCandidates = questPool.filter(
-      (quest) =>
-        quest.id !== completedQuest.id &&
-        !nextCompletedQuestIds.includes(quest.id) &&
-        !activeQuests.some(
-          (activeQuest) => activeQuest.id === quest.id,
-        ),
-    );
-
-    const replacementQuest = getRandomQuest(
-      replacementCandidates,
-    );
-
-    setGardenScore(
-      (currentScore) => currentScore + completedQuest.points,
-    );
-
-    setCompletedQuestIds(nextCompletedQuestIds);
-
-    setActiveQuests((currentQuests): Quest[] => {
-      const remainingQuests = currentQuests.filter(
-        (quest) => quest.id !== completedQuest.id,
-      );
-
-      if (replacementQuest === null) {
-        return remainingQuests;
-      }
-
-      const updatedQuests: Quest[] = [
-        ...remainingQuests,
-        replacementQuest,
-      ];
-
-      return updatedQuests;
-    });
+    const replacementQuest = getRandomQuest(replacements);
+    setGardenScore((score) => score + completedQuest.points);
+    setCompletedQuestIds(nextCompletedIds);
+    setActiveQuests(replacementQuest ? [...remainingQuests, replacementQuest] : remainingQuests);
+    setCelebration(`Quest complete: ${completedQuest.title}. +${completedQuest.points} points for your garden!`);
   }
 
-  const allQuestsComplete =
-    activeQuests.length === 0 &&
-    replacementQuestsAvailable.length === 0;
+  function surpriseMe() {
+    const candidates = getAvailableQuests(completedQuestIds, activeQuests.map((quest) => quest.id)).filter(
+      (quest) => filter === "All" || quest.category === filter,
+    );
+    const picked = getRandomQuest(candidates);
+    if (!picked) {
+      setCelebration(filter === "All" ? "You have discovered every quest. Check off some bingo squares to keep growing!" : `No new ${filter.toLowerCase()} quests are left. Try All to discover more.`);
+      return;
+    }
+    setActiveQuests((current) => current.length < QUESTS_VISIBLE_AT_ONCE ? [...current, picked] : [...current.slice(0, QUESTS_VISIBLE_AT_ONCE - 1), picked]);
+    setCelebration(`Surprise quest unlocked: ${picked.title}.`);
+  }
+
+  function completeBingoSquare(squareId: string) {
+    if (completedBingoIds.includes(squareId)) return;
+    const nextBingoIds = [...completedBingoIds, squareId];
+    const nextBingoSet = new Set(nextBingoIds);
+    const newlyCompletedLines: string[] = [];
+    bingoLines.forEach((line, index) => {
+      const lineId = String(index);
+      if (!completedBingoLines.includes(lineId) && line.every((id) => nextBingoSet.has(id))) newlyCompletedLines.push(lineId);
+    });
+    const pointsEarned = 5 + newlyCompletedLines.length * 10;
+    setCompletedBingoIds(nextBingoIds);
+    if (newlyCompletedLines.length > 0) setCompletedBingoLines([...completedBingoLines, ...newlyCompletedLines]);
+    setGardenScore((score) => score + pointsEarned);
+    setCelebration(newlyCompletedLines.length > 0
+      ? `Bingo line complete! You earned ${pointsEarned} garden points, including a line bonus.`
+      : `Bingo square checked off. +${pointsEarned} garden points!`);
+  }
+
+  const sproutContext = `TouchGrass.exe progress. Garden score: ${gardenScore} points. Sprouts grown: ${sprouts}. ${pointsNeeded} points to next sprout. Quests completed: ${completedCount}/${questPool.length}. Bingo squares completed: ${completedBingoCount}/9; bingo lines completed: ${completedBingoLines.length}. Unlocked badges: ${unlockedBadges.map((badge) => badge.title).join(", ") || "none yet"}. Current category filter: ${filter}. Active quests: ${activeQuests.map((quest) => `${quest.title} (${quest.category}, ${quest.time}, +${quest.points} pts, at ${quest.location}): ${quest.description} Bonus: ${quest.bonusChallenge}`).join("; ") || "none"}. Remaining uncompleted quests: ${getAvailableQuests(completedQuestIds, activeQuests.map((quest) => quest.id)).map((quest) => `${quest.title} (${quest.category}, ${quest.time}, +${quest.points} pts)`).join("; ") || "none"}. Ask Sprout to recommend a fun, realistic next quest based on my time and progress, or turn one quest into a mini-adventure. Keep the suggestions safe, accessible, and on public campus paths/spaces.`;
+  const sproutPrompt = sproutPick
+    ? `Hey Sprout! Help me decide whether to do “${sproutPick.title}” or another TouchGrass quest. I have ${gardenScore} garden points and ${pointsNeeded} points until my next sprout. Suggest a fun way to do this quest and one optional bonus challenge.`
+    : `Hey Sprout! I've completed all the current TouchGrass quests. Suggest a new, safe outdoor mini-adventure around UNC-Chapel Hill and help me keep growing my garden.`;
 
   return (
     <main className={styles.page}>
-      <section
-        className={styles.app}
-        aria-labelledby="touchgrass-title"
-      >
+      <section className={styles.app} aria-labelledby="touchgrass-title">
         <header className={styles.topbar}>
           <div className={styles.brand}>
-            <div className={styles.logo} aria-hidden="true">
-              🌱
-            </div>
-
-            <div>
-              <p className={styles.eyebrow}>
-                UNC-Chapel Hill Outdoor Quests
-              </p>
-
+            <div className={styles.brandCopy}>
+              <p className={styles.eyebrow}>UNC campus breaks</p>
               <h1 id="touchgrass-title">TouchGrass.exe</h1>
             </div>
           </div>
-
-          <div className={styles.scoreBox}>
-            <span>Garden score</span>
-            <strong>{gardenScore} pts</strong>
+          <div className={styles.scoreBox} aria-label={`Garden score ${gardenScore} points`}>
+            <span>GARDEN PTS</span>
+            <strong>{gardenScore}</strong>
           </div>
         </header>
 
-        <section
-  className={styles.summary}
-  aria-label="Quest summary"
->
-  <div className={styles.summaryCard}>
-    <strong>{completedCount}</strong>
-    <span>Completed</span>
-  </div>
+        <section className={styles.summary} aria-label="Your progress">
+          <div className={styles.summaryCard}><strong>{completedCount}</strong><span>Done</span></div>
+          <div className={styles.summaryCard}><strong>{activeQuests.length}</strong><span>On your list</span></div>
+          <div className={styles.summaryCard}><strong>{sprouts}</strong><span>Sprouts</span></div>
+        </section>
 
-  <div className={styles.summaryCard}>
-    <strong>{activeQuests.length}</strong>
-    <span>Active quests</span>
-  </div>
+        <section className={styles.gardenPanel} aria-label="Your garden">
+          <div className={styles.gardenHeading}>
+            <div>
+              <p className={styles.panelEyebrow}>YOUR GARDEN</p>
+              <h2>{sprouts === 0 ? "Grow your first sprout" : `Garden level ${sprouts}`}</h2>
+            </div>
+            <div className={styles.plantBadge}>{sprouts === 0 ? "SEED" : `LEVEL ${sprouts}`}</div>
+          </div>
+          <div className={styles.progressMeta}><span>Next sprout</span><strong>{pointsTowardNextSprout}/{POINTS_PER_SPROUT} pts</strong></div>
+          <div className={styles.progressTrack} role="progressbar" aria-label="Progress toward next sprout" aria-valuemin={0} aria-valuemax={POINTS_PER_SPROUT} aria-valuenow={pointsTowardNextSprout}>
+            <span className={styles.progressFill} style={{ width: `${sproutProgress}%` }} />
+          </div>
+          <p className={styles.nextSprout}>{pointsNeeded} pts to grow again.</p>
+          <details className={styles.funFact}>
+            <summary>Campus field note</summary>
+            <p>{currentPlantFact}</p>
+          </details>
+        </section>
 
-  <div className={styles.summaryCard}>
-    <strong>🌱 {sprouts}</strong>
-    <span>Sprouts</span>
-  </div>
-</section>
+        <section className={styles.sproutCoach} aria-labelledby="sprout-coach-title">
+          <div className={styles.sproutCoachCopy}>
+            <p className={styles.panelEyebrow}>SPROUT RECOMMENDS</p>
+            <h2 id="sprout-coach-title">{sproutPick ? sproutPick.title : "Pick a new adventure"}</h2>
+            <p className={styles.sproutQuickMeta}>{sproutPick ? `${sproutPick.time} · +${sproutPick.points} pts` : "All current quests complete."}</p>
+            <div className={styles.sproutButtonWrap}>
+              <SendToSproutButton appId="touchgrass" text={sproutPrompt} context={sproutContext} />
+            </div>
+          </div>
+        </section>
 
-<section
-  className={styles.funFact}
-  aria-live="polite"
-  aria-label="UNC plant fun fact"
->
-  <div className={styles.funFactIcon} aria-hidden="true">
-    {currentPlantFact.icon}
-  </div>
-
-  <div>
-    <p className={styles.funFactLabel}>
-      {sprouts === 0 ? "Next sprout reward" : `Sprout ${sprouts} fact`}
-    </p>
-
-    <p className={styles.funFactText}>
-      {currentPlantFact.text}
-    </p>
-  </div>
-</section>
-
-        <div className={styles.sectionHeading}>
-          <h2>Today&apos;s Carolina quests</h2>
-          <span>
-            {allQuestsComplete
-              ? "Quest pool complete!"
-              : "Complete one to reshuffle"}
-          </span>
+        <div className={styles.questToolbar}>
+          <div className={styles.sectionHeading}>
+            <h2>Choose a quest</h2>
+            <span>{visibleQuests.length} shown</span>
+          </div>
+          <button className={styles.secondaryButton} type="button" onClick={surpriseMe}>
+            Surprise me
+          </button>
         </div>
 
-        {activeQuests.length > 0 ? (
-          <section
-            className={styles.questList}
-            aria-label="UNC outdoor quests"
-          >
-            {activeQuests.map((quest) => (
+        <div className={styles.filterRow} aria-label="Filter quests">
+          {(["All", "Nature", "Landmark", "Creative", "Mindful", "Adventure"] as QuestFilter[]).map((category) => (
+            <button key={category} type="button" className={`${styles.filterButton} ${filter === category ? styles.filterButtonActive : ""}`} aria-pressed={filter === category} onClick={() => setFilter(category)}>{category}</button>
+          ))}
+        </div>
+
+        {celebration && <p className={styles.celebration} role="status">{celebration}</p>}
+        {textStatus && <p className={styles.celebration} role="status">{textStatus}</p>}
+
+        {visibleQuests.length > 0 ? (
+          <section className={styles.questList} aria-label="Available campus quests">
+            {visibleQuests.map((quest) => (
               <article className={styles.questCard} key={quest.id}>
-                <div
-                  className={styles.questIcon}
-                  aria-hidden="true"
-                >
-                  {quest.icon}
-                </div>
-
                 <div className={styles.questInfo}>
-                  <h3>{quest.title}</h3>
+                  <div className={styles.questTitleRow}><h3>{quest.title}</h3><span className={styles.categoryTag}>{quest.category}</span></div>
                   <p>{quest.description}</p>
+                  <div className={styles.questMeta}>{quest.time}</div>
+                  <details className={styles.bonusDetails}><summary>Quest details</summary><p><strong>Where:</strong> {quest.location}</p><p><strong>Bonus:</strong> {quest.bonusChallenge}</p></details>
                 </div>
-
-                <div className={styles.points}>
-                  +{quest.points} pts
-                </div>
-
                 <div className={styles.questActions}>
+                  <span className={styles.points}>+{quest.points} pts</span>
                   <button
                     className={styles.completeButton}
                     type="button"
-                    onClick={() => completeQuest(quest.id)}
+                    disabled={!phone}
+                    title={phone ? "Sprout will text and speak this quest to your phone" : "Turn on texts in Sprout.exe first"}
+                    onClick={() => textMe({ kind: "quest", questId: quest.id })}
                   >
-                    <span
-                      className={styles.buttonShine}
-                      aria-hidden="true"
-                    />
-                    Complete Quest
+                    Read to me
                   </button>
+                  <button className={styles.completeButton} type="button" onClick={() => completeQuest(quest.id)}>Done</button>
                 </div>
               </article>
             ))}
           </section>
         ) : (
           <div className={styles.emptyState}>
-            <div className={styles.emptyStateIcon}>🌎</div>
-            <h3>All local quests complete!</h3>
-            <p>
-              You explored the entire TouchGrass.exe quest pool.
-            </p>
+            <h3>{allQuestsComplete ? "Quest board cleared!" : `No ${filter.toLowerCase()} quests on your list`}</h3>
+            <p>{allQuestsComplete ? "Try Campus Bingo or ask Sprout for another idea." : "Try another filter or pick a surprise quest."}</p>
+            <button className={styles.secondaryButton} type="button" onClick={() => setFilter("All")}>Show all</button>
           </div>
         )}
 
-        <div className="sprout-app-bar">
-          <SendToSproutButton
-            appId="touchgrass"
-            text={
-              activeQuests.length > 0
-                ? "Which of my quests should I do for my break?"
-                : "I finished every quest! What should I do next?"
-            }
-            context={`TouchGrass quests. Garden score: ${gardenScore} pts. Completed: ${completedCount}. Active quests: ${activeQuests.length > 0 ? activeQuests.map((quest) => `${quest.title} (+${quest.points} pts) - ${quest.description}`).join("; ") : "none"}.`}
-          />
-        </div>
+        <section className={styles.bingoSection} aria-labelledby="bingo-title">
+          <div className={styles.sectionHeading}>
+            <div><p className={styles.panelEyebrow}>SIDE QUEST</p><h2 id="bingo-title">Campus Bingo</h2></div>
+            <span>{completedBingoCount}/9 · {completedBingoLines.length} lines</span>
+          </div>
+          <p className={styles.bingoIntro}>Square: +5 pts <span aria-hidden="true">·</span> New line: +10 bonus</p>
+          <div className={styles.bingoGrid}>
+            {bingoSquares.map((square) => {
+              const isDone = completedBingoIds.includes(square.id);
+              const isCenter = square.id === "free";
+              return (
+                <button key={square.id} type="button" title={square.detail} aria-label={`${square.title}. ${square.detail}${isDone ? ". Completed" : ". Complete for 5 points"}`} className={`${styles.bingoSquare} ${isDone ? styles.bingoSquareDone : ""} ${isCenter ? styles.bingoSquareCenter : ""}`} aria-pressed={isDone} onClick={() => completeBingoSquare(square.id)} disabled={isDone}>
+                  <strong>{square.title}</strong>
+                  <small>{isDone ? "Done" : "+5 pts"}</small>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className={styles.badgesSection} aria-labelledby="badges-title">
+          <div className={styles.sectionHeading}>
+            <div><p className={styles.panelEyebrow}>MILESTONES</p><h2 id="badges-title">Badges</h2></div>
+            <span>{unlockedBadges.length}/{badgeDefinitions.length}</span>
+          </div>
+          <div className={styles.badgeGrid}>
+            {badgeDefinitions.map((badge) => {
+              const isUnlocked = unlockedBadges.some((unlocked) => unlocked.id === badge.id);
+              return (
+                <div key={badge.id} className={`${styles.badgeCard} ${isUnlocked ? styles.badgeCardUnlocked : styles.badgeCardLocked}`}>
+                  <div><strong>{badge.title}</strong><p>{isUnlocked ? "Unlocked" : "Locked"}</p></div>
+                </div>
+              );
+            })}
+          </div>
+          {nextBadge && <p className={styles.nextBadge}>Next badge: <strong>{nextBadge.title}</strong></p>}
+        </section>
 
         <footer className={styles.footer}>
-          <span aria-hidden="true">✦</span>
-          Take a break, Tar Heel.
-          <span aria-hidden="true">✦</span>
+          <span>Take a break, Tar Heel.</span>
         </footer>
       </section>
     </main>
   );
 }
+

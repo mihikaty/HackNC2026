@@ -38,7 +38,8 @@ type AppRequest = {
 export type TextRequest =
   | { kind: "timer-start"; task: string; minutes: number }
   | { kind: "timer-end"; task: string }
-  | { kind: "study-spot"; spotId: string };
+  | { kind: "study-spot"; spotId: string }
+  | { kind: "quest"; questId: string };
 
 type SproutContextValue = {
   messages: SproutMessage[];
@@ -51,6 +52,7 @@ type SproutContextValue = {
   textMe: (request: TextRequest) => void;
   sending: boolean;
   send: (text: string) => void;
+  clearChat: () => void;
   /** Push a message from an app into the chat and bring Sprout.exe forward. */
   sendFromApp: (request: AppRequest) => void;
 };
@@ -78,6 +80,7 @@ export function SproutProvider({
   const messagesRef = useRef<SproutMessage[]>([]);
   const sendingRef = useRef(false);
   const nextId = useRef(1);
+  const conversationVersion = useRef(0);
   const openRef = useRef(openSprout);
 
   useEffect(() => {
@@ -149,6 +152,7 @@ export function SproutProvider({
     async (userMessage: Omit<SproutMessage, "id" | "role">) => {
       if (sendingRef.current) return;
 
+      const requestVersion = conversationVersion.current;
       sendingRef.current = true;
       setSending(true);
 
@@ -186,6 +190,8 @@ export function SproutProvider({
         // Keep the offline reply.
       }
 
+      if (requestVersion !== conversationVersion.current) return;
+
       const reply: SproutMessage = {
         id: nextId.current++,
         role: "sprout",
@@ -217,6 +223,14 @@ export function SproutProvider({
     [post],
   );
 
+  const clearChat = useCallback(() => {
+    conversationVersion.current += 1;
+    messagesRef.current = [];
+    setMessages([]);
+    sendingRef.current = false;
+    setSending(false);
+  }, []);
+
   const value = useMemo(
     () => ({
       messages,
@@ -227,8 +241,9 @@ export function SproutProvider({
       sending,
       send,
       sendFromApp,
+      clearChat,
     }),
-    [messages, phone, setPhone, textStatus, textMe, sending, send, sendFromApp],
+    [messages, phone, setPhone, textStatus, textMe, sending, send, sendFromApp, clearChat],
   );
 
   return (

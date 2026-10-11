@@ -1,3 +1,4 @@
+import { QUESTS } from "@/lib/quests";
 import { SPOTS, getVerdict, getWeather, isSpotId } from "@/lib/weather";
 
 const NOTIFY_URL =
@@ -16,6 +17,7 @@ type Body = {
   task?: unknown;
   minutes?: unknown;
   spotId?: unknown;
+  questId?: unknown;
 };
 
 function cleanTask(task: unknown) {
@@ -38,6 +40,16 @@ async function buildText(body: Body): Promise<string | null> {
     const task = cleanTask(body.task);
 
     return `Time's up! Nice work${task ? ` on "${task}"` : ""}. Go stretch, drink some water, and maybe step outside for a minute.`;
+  }
+
+  if (body.kind === "quest") {
+    // Only known quests, looked up on the server, so this can't be used to
+    // send arbitrary text.
+    const quest = QUESTS.find((item) => item.id === body.questId);
+
+    if (!quest) return null;
+
+    return `Quest time: ${quest.title}. ${quest.description} Where: ${quest.location}. About ${quest.time}. Take your time and enjoy being outside.`;
   }
 
   if (body.kind === "study-spot") {
@@ -89,7 +101,12 @@ export async function POST(request: Request) {
     const response = await fetch(NOTIFY_URL, {
       method: "POST",
       headers,
-      body: JSON.stringify({ to: body.phone, text }),
+      // Timer-finish and quest texts also get a spoken voice note.
+      body: JSON.stringify({
+        to: body.phone,
+        text,
+        voice: body.kind === "timer-end" || body.kind === "quest",
+      }),
       signal: AbortSignal.timeout(15_000),
     });
 
