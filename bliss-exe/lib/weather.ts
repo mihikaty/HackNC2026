@@ -199,7 +199,7 @@ export function getVerdict(weather: Weather | null): Verdict {
     issues.push({
       level: "stay-in",
       reason: "Thunderstorms",
-      tip: "⛈️ Thunderstorms are around, so it's safer to stay inside for now.",
+      tip: "Thunderstorms are around, so it's safer to stay inside for now.",
     });
   } else if (weather.raining || weather.rainChance >= RAIN_CHANCE_PERCENT) {
     issues.push({
@@ -207,7 +207,7 @@ export function getVerdict(weather: Weather | null): Verdict {
       reason: weather.raining
         ? "It's raining"
         : `${weather.rainChance}% chance of rain soon`,
-      tip: "☔ Rain is in the forecast, so grab an umbrella!",
+      tip: "Rain is in the forecast, so grab an umbrella!",
     });
   }
 
@@ -217,13 +217,13 @@ export function getVerdict(weather: Weather | null): Verdict {
     issues.push({
       level: feels >= HOT_STAY_IN_F ? "stay-in" : "caution",
       reason: `Hot (feels like ${Math.round(feels)}°F)`,
-      tip: "🥵 It's hot out there, so find shade and drink plenty of water.",
+      tip: "It's hot out there, so find shade and drink plenty of water.",
     });
   } else if (feels <= COLD_CAUTION_F) {
     issues.push({
       level: feels <= COLD_STAY_IN_F ? "stay-in" : "caution",
       reason: `Cold (feels like ${Math.round(feels)}°F)`,
-      tip: "🧣 It's cold out there, so bundle up!",
+      tip: "It's cold out there, so bundle up!",
     });
   }
 
@@ -231,7 +231,7 @@ export function getVerdict(weather: Weather | null): Verdict {
     issues.push({
       level: "caution",
       reason: `Windy (${Math.round(weather.windMph)} mph)`,
-      tip: "💨 It's windy, so hold on to your papers!",
+      tip: "It's windy, so hold on to your papers!",
     });
   }
 
@@ -239,7 +239,7 @@ export function getVerdict(weather: Weather | null): Verdict {
     issues.push({
       level: "caution",
       reason: `UV index ${Math.round(weather.uvIndex)} (${uvLabel(weather.uvIndex)})`,
-      tip: `🧴 UV is ${uvLabel(weather.uvIndex).toLowerCase()} (${Math.round(weather.uvIndex)}), so wear sunscreen or find some shade.`,
+      tip: `UV is ${uvLabel(weather.uvIndex).toLowerCase()} (${Math.round(weather.uvIndex)}), so wear sunscreen or find some shade.`,
     });
   }
 

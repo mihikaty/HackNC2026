@@ -5,9 +5,9 @@ const NOTIFY_URL =
 const E164 = /^\+[1-9]\d{7,14}$/;
 
 const WELL_WISHES = [
-  "Happy studying! 🌿",
-  "You've got this! 🌱",
-  "Go get 'em, Tar Heel! 🌞",
+  "Happy studying!",
+  "You've got this!",
+  "Go get 'em, Tar Heel!",
 ];
 
 type Body = {
@@ -31,13 +31,13 @@ async function buildText(body: Body): Promise<string | null> {
     const minutes = Number(body.minutes);
     const length = Number.isFinite(minutes) && minutes > 0 ? `${Math.round(minutes)}-minute ` : "";
 
-    return `Focus time! 🌱 Your ${length}session${task ? ` on "${task}"` : ""} just started. ${wish}`;
+    return `Focus time! Your ${length}session${task ? ` on "${task}"` : ""} just started. ${wish}`;
   }
 
   if (body.kind === "timer-end") {
     const task = cleanTask(body.task);
 
-    return `Time's up! 🌿 Nice work${task ? ` on "${task}"` : ""}. Go stretch, drink some water, and maybe step outside for a minute. 🌞`;
+    return `Time's up! Nice work${task ? ` on "${task}"` : ""}. Go stretch, drink some water, and maybe step outside for a minute.`;
   }
 
   if (body.kind === "study-spot") {
@@ -50,7 +50,7 @@ async function buildText(body: Body): Promise<string | null> {
     // ("unknown") or conditions are fine ("go"), stay quiet.
     if (verdict.issues.length === 0) return "";
 
-    return `Heading to ${spot.name}? ${verdict.issues.map((issue) => issue.tip).join(" ")} Happy studying! 🌿`;
+    return `Heading to ${spot.name}? ${verdict.issues.map((issue) => issue.tip).join(" ")} Happy studying!`;
   }
 
   return null;
