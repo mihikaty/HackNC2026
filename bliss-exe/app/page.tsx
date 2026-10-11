@@ -45,6 +45,7 @@ export default function Home() {
   const [activeId, setActiveId] = useState<ProgramId | null>(null);
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [clock, setClock] = useState("--:--");
+  const [date, setDate] = useState("");
   const zCounter = useRef(10);
   const dragRef = useRef<{ id: ProgramId; startMX: number; startMY: number; startWX: number; startWY: number } | null>(null);
 
@@ -64,7 +65,11 @@ export default function Home() {
   }, [theme, themeLoaded]);
 
   useEffect(() => {
-    const updateClock = () => setClock(new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
+    const updateClock = () => {
+      const now = new Date();
+      setClock(now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
+      setDate(now.toLocaleDateString([], { month: "numeric", day: "numeric", year: "2-digit" }));
+    };
     updateClock();
     const interval = window.setInterval(updateClock, 30_000);
     return () => window.clearInterval(interval);
@@ -147,7 +152,7 @@ export default function Home() {
       })}
 
       {startMenuOpen && <section className="start-menu" aria-label="Start menu" onClick={(event) => event.stopPropagation()}><div className="start-menu-header"><div className="start-avatar">🌿</div><div><strong>Welcome to Bliss</strong><span>Your study space</span></div></div><div className="start-menu-list">{PROGRAMS.map((program) => <button key={program.id} className="start-menu-item" onClick={() => openApp(program.id)}><span>{program.icon}</span>{program.name}</button>)}</div><div className="start-menu-footer">Take a breath. You&apos;re doing fine.</div></section>}
-      <footer className="taskbar" onClick={(event) => event.stopPropagation()}><button className="start-button" onClick={() => setStartMenuOpen((current) => !current)} aria-expanded={startMenuOpen}><span className="start-orb">✿</span>Start</button><div className="taskbar-divider" /><div className="taskbar-apps">{windows.map((win) => { const program = PROGRAMS.find((item) => item.id === win.id)!; return <button key={win.id} className={`taskbar-app${activeId === win.id && !win.minimized ? " taskbar-app-active" : ""}`} onClick={() => handleTaskbarClick(win.id)} title={program.name}>{program.icon} {program.name}</button>; })}</div><div className="taskbar-spacer" /><button className="theme-toggle" onClick={() => setTheme((current) => current === "day" ? "night" : "day")} title="Switch day and night modes">{theme === "day" ? "☀ Day" : "☾ Night"}</button><div className="system-clock">{clock}</div></footer>
+      <footer className="taskbar" onClick={(event) => event.stopPropagation()}><button className="start-button" onClick={() => setStartMenuOpen((current) => !current)} aria-expanded={startMenuOpen}><span className="start-flag" aria-hidden="true"><i /><i /><i /><i /></span><span className="start-label">Start</span></button><div className="taskbar-divider" /><div className="taskbar-apps">{windows.map((win) => { const program = PROGRAMS.find((item) => item.id === win.id)!; return <button key={win.id} className={`taskbar-app${activeId === win.id && !win.minimized ? " taskbar-app-active" : ""}`} onClick={() => handleTaskbarClick(win.id)} title={program.name}>{program.icon} {program.name}</button>; })}</div><div className="taskbar-spacer" /><button className="theme-toggle" onClick={() => setTheme((current) => current === "day" ? "night" : "day")} title="Switch day and night modes">{theme === "day" ? "☀ Day" : "☾ Night"}</button><div className="system-clock"><span className="system-clock-date">{date}</span><span>{clock}</span></div></footer>
     </main>
     </SproutProvider>
   );
