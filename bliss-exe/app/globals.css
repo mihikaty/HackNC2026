@@ -168,24 +168,31 @@ opacity: 0.95;
 }
 
 .desktop-status {
-padding: 8px 12px;
-border: 1px solid rgba(255, 255, 255, 0.65);
-border-radius: 999px;
-background: rgba(10, 89, 159, 0.22);
-backdrop-filter: blur(12px);
-font-size: 9px;
-font-weight: 800;
-letter-spacing: 0.1em;
+padding: 5px 10px;
+border: 0;
+border-radius: 0;
+background: #c0c0c0;
+color: #000000;
+font-family: Tahoma, Arial, sans-serif;
+font-size: 10px;
+font-weight: 700;
+letter-spacing: 0.06em;
+text-shadow: none;
+box-shadow:
+inset 1px 1px 0 #808080,
+inset -1px -1px 0 #ffffff,
+inset 2px 2px 0 #0a0a0a,
+inset -2px -2px 0 #dfdfdf;
 }
 
 .status-dot {
 display: inline-block;
-width: 7px;
-height: 7px;
+width: 8px;
+height: 8px;
 margin-right: 7px;
-border-radius: 50%;
-background: #a6ffb5;
-box-shadow: 0 0 8px rgba(166, 255, 181, 0.9);
+border: 1px solid #004400;
+background: #2bd02b;
+box-shadow: inset 1px 1px 0 #b8ffb8;
 }
 
 /* =========================================================
