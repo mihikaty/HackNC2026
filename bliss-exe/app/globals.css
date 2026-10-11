@@ -477,9 +477,10 @@ border-radius: 3px;
 background: linear-gradient(180deg, #e5f5ff, #83b6ec 48%, #5795df);
 color: #083b83;
 font-family: Arial, sans-serif;
-font-size: 78px;
-font-weight: 800;
-line-height: 1;
+font-size: 18px;
+font-weight: 700;
+line-height: 0.9;
+padding: 0;
 box-shadow:
 inset 0 1px 0 rgba(255, 255, 255, 0.95),
 0 1px 2px rgba(0, 35, 90, 0.35);

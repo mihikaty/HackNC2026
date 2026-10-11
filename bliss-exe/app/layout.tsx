@@ -20,7 +20,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "Bliss.exe",
+  title: "ctrl + alt + study",
   description: "A little more focus. A little more outside.",
   icons: {
     icon: "/icons/screensaver.png",
