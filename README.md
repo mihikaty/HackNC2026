@@ -20,4 +20,4 @@ Welcome to FrutiGO CONNECT! In this desktop application there are a multitude of
    Studying can often get very lonely very fast, which is why we created Sprout.exe! Sprout.exe is an interactive chat bot that uses user information from FrutiGO CONNECT! that provides carefully curated responses. Sprout.exe is connected to all programs mentioned above to help users decide on what outdoor quests to do to deciding on a study environment that best suits their needs.
 
 7. Screensaver.exe:
-   For a bit of classis Frutigo Aero nostalgia, Screensaver.exe can provide just that. With a fish bouncing across the screen in a cosmic aquariam in a galaxy far away, users are encouraged to patiently wait for the perfect moment when the fish bounces perfectly into a corncer.
+  For a bit of classic Frutiger Aero nostalgia, Screensaver.exe provides just that. Featuring a fish bouncing across the screen in a cosmic aquarium in a galaxy far away, it encourages users to patiently wait for the perfect moment when the fish hits a corner exactly right.
