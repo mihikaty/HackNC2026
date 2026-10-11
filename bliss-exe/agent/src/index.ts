@@ -3,6 +3,7 @@ import "dotenv/config";
 import { GoogleGenAI } from "@google/genai";
 import { Spectrum } from "spectrum-ts";
 import { imessage } from "spectrum-ts/providers/imessage";
+import { startNotifyServer } from "./notify.js";
 
 async function main() {
   const projectId = process.env.PHOTON_PROJECT_ID;
@@ -55,6 +56,8 @@ same greeting to every message. Ask follow-up questions
 when appropriate. Never pretend to know their location,
 weather, calendar, or activities unless they tell you.
 `;
+
+  startNotifyServer(app);
 
   console.log("Sprout is connected and listening for messages.");
 

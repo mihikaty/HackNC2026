@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { SendToSproutButton } from "@/components/sprout/SendToSproutButton";
+import { useSprout } from "@/components/sprout/SproutProvider";
 
 const PRESETS = [25, 50];
 
@@ -12,6 +13,7 @@ export function FocusApp() {
   const [running, setRunning] = useState(false);
   const [endAt, setEndAt] = useState<number | null>(null);
   const [completed, setCompleted] = useState(false);
+  const { textMe } = useSprout();
 
   useEffect(() => {
     if (!running || endAt === null) return;
@@ -34,9 +36,21 @@ export function FocusApp() {
     return () => window.clearInterval(interval);
   }, [running, endAt]);
 
+  // Text once when a session finishes.
+  useEffect(() => {
+    if (completed) textMe({ kind: "timer-end", task: task.trim() });
+    // Only fire on the false -> true change; `task` is locked while running.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [completed]);
+
   function startTimer() {
     const remaining =
       remainingMs > 0 ? remainingMs : duration * 60_000;
+
+    // Only a fresh session counts as "starting", not resuming after a pause.
+    if (remaining === duration * 60_000) {
+      textMe({ kind: "timer-start", task: task.trim(), minutes: duration });
+    }
 
     setRemainingMs(remaining);
     setEndAt(Date.now() + remaining);

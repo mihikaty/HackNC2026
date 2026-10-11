@@ -35,8 +35,20 @@ type AppRequest = {
   context: string;
 };
 
+export type TextRequest =
+  | { kind: "timer-start"; task: string; minutes: number }
+  | { kind: "timer-end"; task: string }
+  | { kind: "study-spot"; spotId: string };
+
 type SproutContextValue = {
   messages: SproutMessage[];
+  /** Number Sprout may text (E.164), or "" if the person hasn't opted in. */
+  phone: string;
+  setPhone: (phone: string) => void;
+  /** Status of the most recent text, for display in Sprout.exe. */
+  textStatus: string;
+  /** Text the opted-in number. Does nothing if no number is saved. */
+  textMe: (request: TextRequest) => void;
   sending: boolean;
   send: (text: string) => void;
   /** Push a message from an app into the chat and bring Sprout.exe forward. */
@@ -44,6 +56,8 @@ type SproutContextValue = {
 };
 
 const SproutContext = createContext<SproutContextValue | null>(null);
+
+const PHONE_KEY = "sprout-phone";
 
 const OFFLINE_REPLY =
   "I can't reach my roots right now 🌱 Check your connection and try again?";
@@ -57,6 +71,8 @@ export function SproutProvider({
 }) {
   const [messages, setMessages] = useState<SproutMessage[]>([]);
   const [sending, setSending] = useState(false);
+  const [phone, setPhoneState] = useState("");
+  const [textStatus, setTextStatus] = useState("");
 
   // Refs keep `post` stable and free of stale state between rapid clicks.
   const messagesRef = useRef<SproutMessage[]>([]);
@@ -67,6 +83,60 @@ export function SproutProvider({
   useEffect(() => {
     openRef.current = openSprout;
   }, [openSprout]);
+
+  // Load the saved number after mount so server and client render the same.
+  useEffect(() => {
+    const load = window.setTimeout(() => {
+      try {
+        const saved = window.localStorage.getItem(PHONE_KEY);
+
+        if (saved) setPhoneState(saved);
+      } catch {
+        // Storage can be unavailable; the number just won't persist.
+      }
+    }, 0);
+
+    return () => window.clearTimeout(load);
+  }, []);
+
+  const phoneRef = useRef("");
+
+  useEffect(() => {
+    phoneRef.current = phone;
+  }, [phone]);
+
+  const setPhone = useCallback((next: string) => {
+    setPhoneState(next);
+
+    try {
+      if (next) window.localStorage.setItem(PHONE_KEY, next);
+      else window.localStorage.removeItem(PHONE_KEY);
+    } catch {
+      // Ignore storage failures.
+    }
+  }, []);
+
+  const textMe = useCallback((request: TextRequest) => {
+    const number = phoneRef.current;
+
+    if (!number) return;
+
+    fetch("/api/sprout/text", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...request, phone: number }),
+    })
+      .then(async (response) => {
+        if (response.ok) return setTextStatus("📱 Sprout sent you a text.");
+
+        const data = (await response.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+
+        setTextStatus(`Couldn't text you: ${data?.error ?? "unknown error"}`);
+      })
+      .catch(() => setTextStatus("Couldn't text you: network error."));
+  }, []);
 
   const post = useCallback(
     async (userMessage: Omit<SproutMessage, "id" | "role">) => {
@@ -141,8 +211,17 @@ export function SproutProvider({
   );
 
   const value = useMemo(
-    () => ({ messages, sending, send, sendFromApp }),
-    [messages, sending, send, sendFromApp],
+    () => ({
+      messages,
+      phone,
+      setPhone,
+      textStatus,
+      textMe,
+      sending,
+      send,
+      sendFromApp,
+    }),
+    [messages, phone, setPhone, textStatus, textMe, sending, send, sendFromApp],
   );
 
   return (
