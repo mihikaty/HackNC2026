@@ -1869,3 +1869,142 @@ transition-duration: 0.01ms !important;
   margin: 4px 0;
   line-height: 1.5;
 }
+
+/* ---------- Weather.exe ---------- */
+
+.weather-app {
+  display: grid;
+  gap: 12px;
+}
+
+.weather-spots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.weather-spot {
+  padding: 6px 12px;
+  border: 1px solid #9bb8d3;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffffff, #e2edf8);
+  color: #1b466b;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.weather-spot-selected {
+  border-color: var(--accent);
+  background: #d6edff;
+  font-weight: 700;
+}
+
+.weather-note {
+  margin: 0;
+  font-size: 13px;
+}
+
+.weather-verdict {
+  padding: 10px 12px;
+  border: 1px solid var(--window-border);
+  border-radius: 6px;
+  background: var(--glass);
+  font-size: 13px;
+}
+
+.weather-verdict ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+.weather-verdict-go {
+  border-left: 5px solid #35a936;
+}
+
+.weather-verdict-caution {
+  border-left: 5px solid #e0a020;
+}
+
+.weather-verdict-stay-in {
+  border-left: 5px solid #d04040;
+}
+
+.weather-verdict-unknown {
+  border-left: 5px solid #8a9aa8;
+}
+
+.weather-now {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 13px;
+}
+
+.weather-icon {
+  font-size: 48px;
+}
+
+.weather-temp {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.weather-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.weather-stats div {
+  padding: 8px 10px;
+  border: 1px solid var(--window-border);
+  border-radius: 6px;
+  background: var(--glass);
+}
+
+.weather-stats dt {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.weather-stats dd {
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.weather-hours {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.weather-hour {
+  display: grid;
+  flex: 0 0 auto;
+  gap: 2px;
+  min-width: 64px;
+  padding: 8px;
+  border: 1px solid var(--window-border);
+  border-radius: 6px;
+  background: var(--glass);
+  font-size: 11px;
+  text-align: center;
+}
+
+.weather-hour strong {
+  font-size: 14px;
+}
+
+.weather-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  opacity: 0.95;
+}

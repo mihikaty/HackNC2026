@@ -127,11 +127,18 @@ export function SproutProvider({
       body: JSON.stringify({ ...request, phone: number }),
     })
       .then(async (response) => {
-        if (response.ok) return setTextStatus("📱 Sprout sent you a text.");
-
         const data = (await response.json().catch(() => null)) as {
           error?: string;
+          sent?: boolean;
         } | null;
+
+        if (response.ok) {
+          return setTextStatus(
+            data?.sent === false
+              ? "Weather looks fine, so no text was needed."
+              : "📱 Sprout sent you a text.",
+          );
+        }
 
         setTextStatus(`Couldn't text you: ${data?.error ?? "unknown error"}`);
       })

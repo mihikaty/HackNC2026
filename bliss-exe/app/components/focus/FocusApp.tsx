@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from "react";
 import { SendToSproutButton } from "@/app/components/sprout/SendToSproutButton";
+import { useSprout } from "@/app/components/sprout/SproutProvider";
 import "./focus.css";
 
 type StudyTask = {
@@ -51,6 +52,7 @@ export function FocusApp() {
   const [completed, setCompleted] = useState(false);
   const [completedSessions, setCompletedSessions] = useState(0);
   const [showTaskForm, setShowTaskForm] = useState(false);
+  const { textMe } = useSprout();
 
   useEffect(() => {
     try {
@@ -81,6 +83,13 @@ export function FocusApp() {
   }, [running, endAt]);
 
   const selectedTask = tasks.find((task) => task.id === selectedTaskId);
+
+  // Text once when a session finishes. The title is read at that moment.
+  useEffect(() => {
+    if (completed) textMe({ kind: "timer-end", task: selectedTask?.title ?? "" });
+    // Only fire on the false -> true change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [completed]);
   const openTasks = tasks.filter((task) => !task.done);
   const doneTasks = tasks.filter((task) => task.done);
 
@@ -146,6 +155,12 @@ export function FocusApp() {
 
   function startTimer() {
     const remaining = remainingMs > 0 ? remainingMs : duration * 60_000;
+
+    // Only a fresh session counts as "starting", not resuming after a pause.
+    if (remaining === duration * 60_000) {
+      textMe({ kind: "timer-start", task: selectedTask?.title ?? "", minutes: duration });
+    }
+
     setRemainingMs(remaining);
     setEndAt(Date.now() + remaining);
     setRunning(true);
