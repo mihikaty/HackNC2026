@@ -39,13 +39,14 @@ export default function ExploreApp() {
     locations.find((location) => location.id === selectedLocationId) ??
     locations[0];
 
-  const { sendFromApp } = useSprout();
+  const { sendFromApp, textMe } = useSprout();
 
   const handleSendToSprout = (locationId: string) => {
     const location = locations.find((item) => item.id === locationId);
 
     if (!location) return;
 
+    textMe({ kind: "study-spot", spotId: location.id });
     sendFromApp({
       appId: "explore",
       text: `Can you help me plan a study session at ${location.name}?`,

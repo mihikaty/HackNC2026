@@ -1838,3 +1838,27 @@ transition-duration: 0.01ms !important;
   justify-content: flex-end;
   margin-top: 10px;
 }
+
+.sprout-texts {
+  padding: 6px 10px;
+  border: 1px solid var(--window-border);
+  border-radius: 6px;
+  background: var(--glass);
+  font-size: 12px;
+}
+
+.sprout-texts summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.sprout-texts-body {
+  display: grid;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.sprout-texts p {
+  margin: 4px 0;
+  line-height: 1.5;
+}
