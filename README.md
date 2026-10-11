@@ -17,7 +17,7 @@ Welcome to ctrl + alt + study. In this desktop application there are a multitude
    For any outdoor adventure, it is important to be prepared. Therefore, we created Weather.exe in order for the user to be aware of the weather. It provides all the important weather information such as the temperature, UV index, Rain(next 3 hrs), and any wind. Weather.exe provides this information for a variety of places across UNC Chapel Hill's campus.
 
 6. Sprout.exe:
-   Studying can often get very lonely very fast, which is why we created Sprout.exe! Sprout.exe is an interactive chat bot that uses user information from ctrl + alt + study! to provide carefully curated responses. Sprout.exe is connected to all programs mentioned above to help users decide on what outdoor quests to do to deciding on a study environment that best suits their needs. Sprout.exe is also integrated with voice to give gentle reminders and receive voice commands.
+   Studying can often get very lonely very fast, which is why we created Sprout.exe! Sprout.exe is an interactive chat bot that uses user information from ctrl + alt + study to provide carefully curated responses. Sprout.exe is connected to all programs mentioned above to help users decide on what outdoor quests to do to deciding on a study environment that best suits their needs. Sprout.exe is also integrated with voice to give gentle reminders and receive voice commands.
 
 7. Screensaver.exe:
   For a bit of classic Frutiger Aero nostalgia, Screensaver.exe provides just that. Featuring a fish bouncing across the screen in a cosmic aquarium in a galaxy far away, it encourages users to patiently wait for the perfect moment when the fish hits a corner exactly right.
