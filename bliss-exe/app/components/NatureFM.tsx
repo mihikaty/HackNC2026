@@ -8,6 +8,7 @@ import {
   type ChangeEvent,
 } from "react";
 import { SendToSproutButton } from "@/app/components/sprout/SendToSproutButton";
+import WeatherAmbience from "@/app/components/weather/WeatherAmbience";
 
 const TRACKS = [
   {
@@ -463,6 +464,8 @@ export default function NatureFmApp() {
           </label>
         </div>
       </div>
+
+      <WeatherAmbience />
 
       <div className="sprout-app-bar">
         <SendToSproutButton

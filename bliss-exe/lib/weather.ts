@@ -261,3 +261,84 @@ export function getVerdict(weather: Weather | null): Verdict {
     issues,
   };
 }
+
+export type Ambience = {
+  /** Stable key, also used as the cache file name. */
+  id: string;
+  /** Short name shown in Nature.fm. */
+  label: string;
+  /** Text prompt for the ElevenLabs sound generator. */
+  prompt: string;
+};
+
+const LOOP_NOTE = "calm, peaceful study ambience, no music, no speech, seamless loop";
+
+/**
+ * Which soundscape suits this weather. A small fixed set of categories, so
+ * each sound is generated once and then reused from the cache.
+ */
+export function ambienceFor(weather: Weather): Ambience {
+  const code = weather.weatherCode;
+
+  if (weather.thunder) {
+    return {
+      id: "storm",
+      label: "Distant thunderstorm",
+      prompt: `Rain on leaves with soft rolling thunder far away, ${LOOP_NOTE}`,
+    };
+  }
+
+  if (weather.raining) {
+    return {
+      id: "rain",
+      label: "Rain on the leaves",
+      prompt: `Steady gentle rain falling on leaves and a quiet campus lawn, ${LOOP_NOTE}`,
+    };
+  }
+
+  if (code >= 71 && code <= 77) {
+    return {
+      id: "snow",
+      label: "Quiet snowfall",
+      prompt: `Hushed winter air with a soft muffled breeze and faint distant wind chimes, ${LOOP_NOTE}`,
+    };
+  }
+
+  if (code === 45 || code === 48) {
+    return {
+      id: "fog",
+      label: "Foggy morning",
+      prompt: `Misty quiet morning with a faint breeze, dripping leaves and a few distant birds, ${LOOP_NOTE}`,
+    };
+  }
+
+  if (weather.windMph >= 15) {
+    return {
+      id: "windy",
+      label: "Breezy trees",
+      prompt: `Wind moving through tall trees and rustling leaves, ${LOOP_NOTE}`,
+    };
+  }
+
+  if (code >= 2) {
+    return {
+      id: weather.isDay ? "cloudy-day" : "cloudy-night",
+      label: weather.isDay ? "Cloudy afternoon" : "Cloudy evening",
+      prompt: weather.isDay
+        ? `Soft breeze under an overcast sky with gentle birdsong in the trees, ${LOOP_NOTE}`
+        : `Quiet cloudy night with a light breeze and slow crickets, ${LOOP_NOTE}`,
+    };
+  }
+
+  return weather.isDay
+    ? {
+        id: "clear-day",
+        label: "Sunny afternoon",
+        prompt: `Warm breeze through oak trees with cheerful birdsong and a faint stream, ${LOOP_NOTE}`,
+      }
+    : {
+        id: "clear-night",
+        label: "Clear night",
+        prompt: `Peaceful clear night with soft crickets and a very light breeze, ${LOOP_NOTE}`,
+      };
+}

@@ -2101,3 +2101,54 @@ transition-duration: 0.01ms !important;
   font-size: 11px;
   opacity: 0.95;
 }
+
+/* ---------- Nature.fm weather ambience ---------- */
+
+.ambience-panel {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 2px solid #808080;
+  border-top-color: #ffffff;
+  border-left-color: #ffffff;
+  background: #c0c0c0;
+  color: #111111;
+  font-size: 12px;
+}
+
+.ambience-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.ambience-title span {
+  font-size: 10px;
+  color: #404040;
+}
+
+.ambience-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.ambience-row label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.ambience-row select {
+  padding: 2px 4px;
+  font: inherit;
+}
+
+.ambience-note {
+  margin: 0;
+  font-size: 11px;
+}
