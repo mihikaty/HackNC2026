@@ -27,12 +27,28 @@ function voiceEnabled() {
   return true;
 }
 
-/** Strip things a voice would read out loud awkwardly. */
-function toSpeakable(text: string) {
+/** Spell out shorthand the voice would mispronounce ("min." reads as "minnow"). */
+function expandShorthand(text: string) {
   return text
+    .replace(/(\d)\s*[\u2013\u2014-]\s*(?=\d)/g, "$1 to ")
+    .replace(/\b(\d+(?:\.\d+)?)\s*(?:mins?|minutes?)\b/gi, (_, n: string) =>
+      Number(n) === 1 ? `${n} minute` : `${n} minutes`,
+    )
+    .replace(/\b(\d+(?:\.\d+)?)\s*(?:secs?|seconds?)\b/gi, (_, n: string) =>
+      Number(n) === 1 ? `${n} second` : `${n} seconds`,
+    )
+    .replace(/\b(\d+(?:\.\d+)?)\s*(?:hrs?|hours?)\b/gi, (_, n: string) =>
+      Number(n) === 1 ? `${n} hour` : `${n} hours`,
+    )
+    .replace(/\bpts\b/gi, "points");
+}
+
+/** Strip things a voice would read out loud awkwardly. */
+export function toSpeakable(text: string) {
+  return expandShorthand(text)
     .replace(/https?:\/\/\S+/g, "")
     .replace(/[*_`#>~]/g, "")
-    .replace(/[\p{Extended_Pictographic}‍️]/gu, "")
+    .replace(/[\p{Extended_Pictographic}\u200d\ufe0f]/gu, "")
     .replace(/\s+/g, " ")
     .trim();
 }
