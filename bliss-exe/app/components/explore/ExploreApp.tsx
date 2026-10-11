@@ -116,10 +116,10 @@ export default function ExploreApp() {
     async function initializeMap() {
       if (!mapElementRef.current || mapRef.current) return;
       try {
-        const module = await import("leaflet");
+        const leafletModule = await import("leaflet");
         if (cancelled || !mapElementRef.current) return;
-        const moduleWithDefault = module as unknown as { default?: LeafletApi };
-        const L = (moduleWithDefault.default ?? module) as unknown as LeafletApi;
+        const moduleWithDefault = leafletModule as unknown as { default?: LeafletApi };
+        const L = (moduleWithDefault.default ?? leafletModule) as unknown as LeafletApi;
         leafletRef.current = L;
         const map = L.map(mapElementRef.current, { center: MAP_CENTER, zoom: 16, zoomControl: true, scrollWheelZoom: true });
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
