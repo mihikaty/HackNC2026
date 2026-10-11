@@ -1715,3 +1715,126 @@ animation-iteration-count: 1 !important;
 transition-duration: 0.01ms !important;
 }
 }
+/* ---------- Sprout chat and "Ask Sprout" buttons ---------- */
+
+.sprout-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: min(460px, calc(100dvh - 230px));
+  min-height: 240px;
+}
+
+.sprout-log {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  padding: 10px;
+  overflow-y: auto;
+  border: 1px solid var(--window-border);
+  border-radius: 6px;
+  background: var(--glass);
+}
+
+.sprout-empty {
+  margin: auto;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.sprout-empty-icon {
+  font-size: 40px;
+}
+
+.sprout-starters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.sprout-chip {
+  padding: 6px 10px;
+  border: 1px solid #9bb8d3;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffffff, #e2edf8);
+  color: #1b466b;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sprout-bubble {
+  max-width: 85%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.sprout-bubble-user {
+  align-self: flex-end;
+  background: linear-gradient(180deg, #3b9bf4, #0755c7);
+  color: #ffffff;
+}
+
+.sprout-bubble-sprout {
+  align-self: flex-start;
+  border: 1px solid #b9dfb4;
+  background: linear-gradient(180deg, #f3fff0, #d9f5d3);
+  color: #1d4a22;
+}
+
+.sprout-typing {
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.sprout-form {
+  display: flex;
+  gap: 8px;
+}
+
+.sprout-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid #9bb8d3;
+  border-radius: 4px;
+  font: inherit;
+  font-size: 13px;
+}
+
+.sprout-send-button {
+  padding: 8px 12px;
+  border: 1px solid #3e9a3f;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #7fe07c, #35a936);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  text-shadow: 0 1px 1px rgba(0, 60, 0, 0.4);
+  cursor: pointer;
+}
+
+.sprout-send-button:hover:not(:disabled),
+.sprout-chip:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.sprout-send-button:disabled,
+.sprout-chip:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.sprout-app-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
