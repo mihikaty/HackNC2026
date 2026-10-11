@@ -38,7 +38,8 @@ type AppRequest = {
 export type TextRequest =
   | { kind: "timer-start"; task: string; minutes: number }
   | { kind: "timer-end"; task: string }
-  | { kind: "study-spot"; spotId: string };
+  | { kind: "study-spot"; spotId: string }
+  | { kind: "quest"; questId: string };
 
 type SproutContextValue = {
   messages: SproutMessage[];
