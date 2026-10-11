@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { FocusApp } from "@/app/components/focus/FocusApp";
 import NatureFmApp from "@/app/components/nature/NatureFmApp";
 import TouchGrassApp from "@/app/components/Touching/TouchGrassApp";
@@ -11,13 +12,13 @@ import WeatherApp from "@/app/components/weather/WeatherApp";
 import Screensaver from "@/app/components/screensaver/Screensaver";
 
 const PROGRAMS = [
-  { id: "focus", name: "Focus.exe", icon: "⏱️", description: "Your personal study timer and task space.", next: "Build a focus timer, task list, and session history here." },
-  { id: "explore", name: "Explore.exe", icon: "🧭", description: "Find your next outdoor study spot.", next: "Build the campus map, location cards, and filters here." },
-  { id: "nature", name: "Nature.fm", icon: "🎧", description: "Bring the sounds of nature into your study session.", next: "Build the audio player and nature sound library here." },
-  { id: "touchgrass", name: "TouchGrass.exe", icon: "🌱", description: "Take a tiny break away from your screen.", next: "Build outdoor challenges, activity instructions, and optional progress logging here." },
-  { id: "weather", name: "Weather.exe", icon: "🌤️", description: "Find out whether it is a good time to go outside.", next: "Connect a weather API and generate weather-aware recommendations here." },
-  { id: "sprout", name: "Sprout.exe", icon: "🫧", description: "Your study and outdoor-break companion.", next: "Connect the chat interface to the Sprout backend and Photon iMessage agent." },
-  { id: "screensaver", name: "Screensaver.exe", icon: "🐠", description: "A little fish swimming through a galaxy.", next: "Watch a fish drift through deep space." },
+  { id: "focus", name: "Focus.exe", icon: "/icons/focus.png", description: "Your personal study timer and task space.", next: "Build a focus timer, task list, and session history here." },
+  { id: "explore", name: "Explore.exe", icon: "/icons/explore.png", description: "Find your next outdoor study spot.", next: "Build the campus map, location cards, and filters here." },
+  { id: "nature", name: "Nature.fm", icon: "/icons/nature.png", description: "Bring the sounds of nature into your study session.", next: "Build the audio player and nature sound library here." },
+  { id: "touchgrass", name: "TouchGrass.exe", icon: "/icons/touchgrass.png", description: "Take a tiny break away from your screen.", next: "Build outdoor challenges, activity instructions, and optional progress logging here." },
+  { id: "weather", name: "Weather.exe", icon: "/icons/weather.png", description: "Find out whether it is a good time to go outside.", next: "Connect a weather API and generate weather-aware recommendations here." },
+  { id: "sprout", name: "Sprout.exe", icon: "/icons/sprout.png", description: "Your study and outdoor-break companion.", next: "Connect the chat interface to the Sprout backend and Photon iMessage agent." },
+  { id: "screensaver", name: "Screensaver.exe", icon: "/icons/screensaver.png", description: "A little fish swimming through a galaxy.", next: "Watch a fish drift through deep space." },
 ] as const;
 
 type ProgramId = (typeof PROGRAMS)[number]["id"];
@@ -38,6 +39,20 @@ const SPAWN_OFFSETS = [
   { x: 205, y: 110 },
 ];
 
+/* Pixel art icon. `unoptimized` stops Next from softening the edges. */
+function ProgramIcon({ src, size }: { src: string; size: number }) {
+  return (
+    <Image
+      src={src}
+      alt=""
+      width={size}
+      height={size}
+      unoptimized
+      draggable={false}
+    />
+  );
+}
+
 export default function Home() {
   const [theme, setTheme] = useState<Theme>("day");
   const [themeLoaded, setThemeLoaded] = useState(false);
@@ -47,8 +62,15 @@ export default function Home() {
   const [clock, setClock] = useState("--:--");
   const [date, setDate] = useState("");
   const zCounter = useRef(10);
-  const dragRef = useRef<{ id: ProgramId; startMX: number; startMY: number; startWX: number; startWY: number } | null>(null);
+  const dragRef = useRef<{
+    id: ProgramId;
+    startMX: number;
+    startMY: number;
+    startWX: number;
+    startWY: number;
+  } | null>(null);
 
+  /* Load the saved theme */
   useEffect(() => {
     const saved = window.localStorage.getItem("bliss-theme");
 
@@ -60,10 +82,12 @@ export default function Home() {
     return () => window.clearTimeout(loadTheme);
   }, []);
 
+  /* Save the theme */
   useEffect(() => {
     if (themeLoaded) window.localStorage.setItem("bliss-theme", theme);
   }, [theme, themeLoaded]);
 
+  /* Taskbar clock */
   useEffect(() => {
     const updateClock = () => {
       const now = new Date();
@@ -75,85 +99,326 @@ export default function Home() {
     return () => window.clearInterval(interval);
   }, []);
 
+  /* Window dragging */
   useEffect(() => {
     const onMove = (event: MouseEvent) => {
       if (!dragRef.current) return;
       const drag = dragRef.current;
-      setWindows((current) => current.map((win) => win.id === drag.id ? { ...win, x: drag.startWX + event.clientX - drag.startMX, y: drag.startWY + event.clientY - drag.startMY } : win));
+      setWindows((current) =>
+        current.map((win) =>
+          win.id === drag.id
+            ? {
+                ...win,
+                x: drag.startWX + event.clientX - drag.startMX,
+                y: drag.startWY + event.clientY - drag.startMY,
+              }
+            : win
+        )
+      );
     };
-    const onUp = () => { dragRef.current = null; };
+    const onUp = () => {
+      dragRef.current = null;
+    };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
-    return () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
   }, []);
 
   function bringToFront(id: ProgramId) {
     zCounter.current += 1;
-    setWindows((current) => current.map((win) => win.id === id ? { ...win, zIndex: zCounter.current, minimized: false } : win));
+    setWindows((current) =>
+      current.map((win) =>
+        win.id === id ? { ...win, zIndex: zCounter.current, minimized: false } : win
+      )
+    );
     setActiveId(id);
   }
 
   function openApp(id: ProgramId) {
     setStartMenuOpen(false);
-    if (windows.some((win) => win.id === id)) { bringToFront(id); return; }
-    const offset = window.innerWidth <= 640
-      ? { x: 12, y: 72 }
-      : SPAWN_OFFSETS[windows.length % SPAWN_OFFSETS.length];
+    if (windows.some((win) => win.id === id)) {
+      bringToFront(id);
+      return;
+    }
+    const offset =
+      window.innerWidth <= 640
+        ? { x: 12, y: 72 }
+        : SPAWN_OFFSETS[windows.length % SPAWN_OFFSETS.length];
     zCounter.current += 1;
-    setWindows((current) => [...current, { id, x: offset.x, y: offset.y, minimized: false, maximized: false, zIndex: zCounter.current }]);
+    setWindows((current) => [
+      ...current,
+      { id, x: offset.x, y: offset.y, minimized: false, maximized: false, zIndex: zCounter.current },
+    ]);
     setActiveId(id);
   }
 
   function closeApp(id: ProgramId) {
     setWindows((current) => current.filter((win) => win.id !== id));
-    setActiveId((current) => current === id ? null : current);
+    setActiveId((current) => (current === id ? null : current));
   }
 
   function minimizeWindow(id: ProgramId) {
-    setWindows((current) => current.map((win) => win.id === id ? { ...win, minimized: true } : win));
-    setActiveId((current) => current === id ? null : current);
+    setWindows((current) =>
+      current.map((win) => (win.id === id ? { ...win, minimized: true } : win))
+    );
+    setActiveId((current) => (current === id ? null : current));
   }
 
   function toggleMaximize(id: ProgramId) {
-    setWindows((current) => current.map((win) => win.id === id ? { ...win, maximized: !win.maximized } : win));
+    setWindows((current) =>
+      current.map((win) => (win.id === id ? { ...win, maximized: !win.maximized } : win))
+    );
   }
 
   function startDrag(event: React.MouseEvent, id: ProgramId) {
     const win = windows.find((item) => item.id === id);
     if (!win || win.maximized) return;
     bringToFront(id);
-    dragRef.current = { id, startMX: event.clientX, startMY: event.clientY, startWX: win.x, startWY: win.y };
+    dragRef.current = {
+      id,
+      startMX: event.clientX,
+      startMY: event.clientY,
+      startWX: win.x,
+      startWY: win.y,
+    };
     event.preventDefault();
   }
 
   function handleTaskbarClick(id: ProgramId) {
     const win = windows.find((item) => item.id === id);
     if (!win) return;
-    if (win.minimized || activeId !== id) bringToFront(id); else minimizeWindow(id);
+    if (win.minimized || activeId !== id) bringToFront(id);
+    else minimizeWindow(id);
   }
 
   return (
     <SproutProvider openSprout={() => openApp("sprout")}>
-    <main className="desktop" data-theme={theme} onClick={() => setStartMenuOpen(false)}>
-      <div className="sky" aria-hidden="true" />
-      <header className="desktop-header"><div><div className="desktop-brand">ctrl + alt + study</div><div className="desktop-subtitle">A little more focus. A little more outside.</div></div><div className="desktop-status"><span className="status-dot" />YOUR LITTLE CORNER OF THE WORLD</div></header>
+      <main
+        className="desktop"
+        data-theme={theme}
+        onClick={() => setStartMenuOpen(false)}
+      >
+        <div className="sky" aria-hidden="true" />
 
-      <section className="desktop-icons" aria-label="Desktop applications">
-        {PROGRAMS.map((program) => <button key={program.id} className={`desktop-icon${activeId === program.id ? " selected" : ""}`} onClick={(event) => { event.stopPropagation(); openApp(program.id); }} aria-label={`Open ${program.name}`}><span className="desktop-icon-image">{program.icon}</span><span className="desktop-icon-label">{program.name}</span></button>)}
-      </section>
+        {/* Header */}
+        <header className="desktop-header">
+          <div>
+            <div className="desktop-brand">B L I S S . E X E</div>
+            <div className="desktop-subtitle">A little more focus. A little more outside.</div>
+          </div>
+          <div className="desktop-status">
+            <span className="status-dot" />
+            YOUR LITTLE CORNER OF THE WORLD
+          </div>
+        </header>
 
-      {windows.map((win) => {
-        const program = PROGRAMS.find((item) => item.id === win.id)!;
-        const isActive = activeId === win.id;
-        return <section key={win.id} className={`app-window resizable${win.id === "explore" ? " explore-window" : ""} ${win.id}-window${isActive ? " active" : ""}${win.maximized ? " maximized" : ""}`} style={win.maximized ? { zIndex: win.zIndex } : { transform: `translate(${win.x}px, ${win.y}px)`, zIndex: win.zIndex, display: win.minimized ? "none" : "flex" }} onMouseDown={() => bringToFront(win.id)} aria-label={program.name}>
-          <div className="window-titlebar" style={{ cursor: win.maximized ? "default" : "grab" }} onMouseDown={(event) => startDrag(event, win.id)} onDoubleClick={() => toggleMaximize(win.id)}><div className="window-title"><span>{program.icon}</span><span>{program.name}</span></div><div className="window-controls"><button className="window-control" onClick={(event) => { event.stopPropagation(); minimizeWindow(win.id); }} aria-label={`Minimize ${program.name}`} title="Minimize">─</button><button className="window-control" onClick={(event) => { event.stopPropagation(); toggleMaximize(win.id); }} aria-label={win.maximized ? `Restore ${program.name}` : `Maximize ${program.name}`} title={win.maximized ? "Restore" : "Maximize"}>{win.maximized ? "❐" : "□"}</button><button className="window-close" onClick={(event) => { event.stopPropagation(); closeApp(win.id); }} aria-label={`Close ${program.name}`} title="Close">×</button></div></div>
-          <div className="window-content">{win.id === "focus" ? <FocusApp /> : win.id === "nature" ? <NatureFmApp /> : win.id === "touchgrass" ? <TouchGrassApp /> : win.id === "explore" ? <ExploreApp /> : win.id === "sprout" ? <SproutApp /> : win.id === "screensaver" ? <Screensaver /> : win.id === "weather" ? <WeatherApp /> : <><div className="program-hero-icon">{program.icon}</div><h2>{program.name}</h2><p className="program-description">{program.description}</p><div className="program-placeholder"><span className="placeholder-label">COMING TO THIS WINDOW</span><p>{program.next}</p></div></>}</div>
-        </section>;
-      })}
+        {/* Desktop icons */}
+        <section className="desktop-icons" aria-label="Desktop applications">
+          {PROGRAMS.map((program) => (
+            <button
+              key={program.id}
+              data-app={program.id}
+              className={`desktop-icon${activeId === program.id ? " selected" : ""}`}
+              onClick={(event) => {
+                event.stopPropagation();
+                openApp(program.id);
+              }}
+              aria-label={`Open ${program.name}`}
+            >
+              <span className="desktop-icon-image">
+                <ProgramIcon src={program.icon} size={48} />
+              </span>
+              <span className="desktop-icon-label">{program.name}</span>
+            </button>
+          ))}
+        </section>
 
-      {startMenuOpen && <section className="start-menu" aria-label="Start menu" onClick={(event) => event.stopPropagation()}><div className="start-menu-header"><div className="start-avatar">🌿</div><div><strong>Welcome to ctrl + alt + study</strong><span>Your study space</span></div></div><div className="start-menu-list">{PROGRAMS.map((program) => <button key={program.id} className="start-menu-item" onClick={() => openApp(program.id)}><span>{program.icon}</span>{program.name}</button>)}</div><div className="start-menu-footer">Take a breath. You&apos;re doing fine.</div></section>}
-      <footer className="taskbar" onClick={(event) => event.stopPropagation()}><button className="start-button" onClick={() => setStartMenuOpen((current) => !current)} aria-expanded={startMenuOpen}><span className="start-flag" aria-hidden="true"><i /><i /><i /><i /></span><span className="start-label">Start</span></button><div className="taskbar-divider" /><div className="taskbar-apps">{windows.map((win) => { const program = PROGRAMS.find((item) => item.id === win.id)!; return <button key={win.id} className={`taskbar-app${activeId === win.id && !win.minimized ? " taskbar-app-active" : ""}`} onClick={() => handleTaskbarClick(win.id)} title={program.name}>{program.icon} {program.name}</button>; })}</div><div className="taskbar-spacer" /><button className="theme-toggle" onClick={() => setTheme((current) => current === "day" ? "night" : "day")} title="Switch day and night modes">{theme === "day" ? "☀ Day" : "☾ Night"}</button><div className="system-clock"><span className="system-clock-date">{date}</span><span>{clock}</span></div></footer>
-    </main>
+        {/* Windows */}
+        {windows.map((win) => {
+          const program = PROGRAMS.find((item) => item.id === win.id)!;
+          const isActive = activeId === win.id;
+
+          return (
+            <section
+              key={win.id}
+              className={`app-window resizable${win.id === "explore" ? " explore-window" : ""} ${win.id}-window${isActive ? " active" : ""}${win.maximized ? " maximized" : ""}`}
+              style={
+                win.maximized
+                  ? { zIndex: win.zIndex }
+                  : {
+                      transform: `translate(${win.x}px, ${win.y}px)`,
+                      zIndex: win.zIndex,
+                      display: win.minimized ? "none" : "flex",
+                    }
+              }
+              onMouseDown={() => bringToFront(win.id)}
+              aria-label={program.name}
+            >
+              <div
+                className="window-titlebar"
+                style={{ cursor: win.maximized ? "default" : "grab" }}
+                onMouseDown={(event) => startDrag(event, win.id)}
+                onDoubleClick={() => toggleMaximize(win.id)}
+              >
+                <div className="window-title">
+                  <span>
+                    <ProgramIcon src={program.icon} size={18} />
+                  </span>
+                  <span>{program.name}</span>
+                </div>
+                <div className="window-controls">
+                  <button
+                    className="window-control"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      minimizeWindow(win.id);
+                    }}
+                    aria-label={`Minimize ${program.name}`}
+                    title="Minimize"
+                  >
+                    ─
+                  </button>
+                  <button
+                    className="window-control"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      toggleMaximize(win.id);
+                    }}
+                    aria-label={win.maximized ? `Restore ${program.name}` : `Maximize ${program.name}`}
+                    title={win.maximized ? "Restore" : "Maximize"}
+                  >
+                    {win.maximized ? "❐" : "□"}
+                  </button>
+                  <button
+                    className="window-close"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      closeApp(win.id);
+                    }}
+                    aria-label={`Close ${program.name}`}
+                    title="Close"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+
+              <div className="window-content">
+                {win.id === "focus" ? (
+                  <FocusApp />
+                ) : win.id === "nature" ? (
+                  <NatureFmApp />
+                ) : win.id === "touchgrass" ? (
+                  <TouchGrassApp />
+                ) : win.id === "explore" ? (
+                  <ExploreApp />
+                ) : win.id === "sprout" ? (
+                  <SproutApp />
+                ) : win.id === "screensaver" ? (
+                  <Screensaver />
+                ) : win.id === "weather" ? (
+                  <WeatherApp />
+                ) : (
+                  <>
+                    <div className="program-hero-icon">
+                      <ProgramIcon src={program.icon} size={58} />
+                    </div>
+                    <h2>{program.name}</h2>
+                    <p className="program-description">{program.description}</p>
+                    <div className="program-placeholder">
+                      <span className="placeholder-label">COMING TO THIS WINDOW</span>
+                      <p>{program.next}</p>
+                    </div>
+                  </>
+                )}
+              </div>
+            </section>
+          );
+        })}
+
+        {/* Start menu */}
+        {startMenuOpen && (
+          <section
+            className="start-menu"
+            aria-label="Start menu"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="start-menu-header">
+              <div className="start-avatar">🌿</div>
+              <div>
+                <strong>Welcome to Bliss</strong>
+                <span>Your study space</span>
+              </div>
+            </div>
+            <div className="start-menu-list">
+              {PROGRAMS.map((program) => (
+                <button
+                  key={program.id}
+                  className="start-menu-item"
+                  onClick={() => openApp(program.id)}
+                >
+                  <span>
+                    <ProgramIcon src={program.icon} size={24} />
+                  </span>
+                  {program.name}
+                </button>
+              ))}
+            </div>
+            <div className="start-menu-footer">Take a breath. You&apos;re doing fine.</div>
+          </section>
+        )}
+
+        {/* Taskbar */}
+        <footer className="taskbar" onClick={(event) => event.stopPropagation()}>
+          <button
+            className="start-button"
+            onClick={() => setStartMenuOpen((current) => !current)}
+            aria-expanded={startMenuOpen}
+          >
+            <span className="start-flag" aria-hidden="true">
+              <i /><i /><i /><i />
+            </span>
+            <span className="start-label">Start</span>
+          </button>
+
+          <div className="taskbar-divider" />
+
+          <div className="taskbar-apps">
+            {windows.map((win) => {
+              const program = PROGRAMS.find((item) => item.id === win.id)!;
+              return (
+                <button
+                  key={win.id}
+                  className={`taskbar-app${activeId === win.id && !win.minimized ? " taskbar-app-active" : ""}`}
+                  onClick={() => handleTaskbarClick(win.id)}
+                  title={program.name}
+                >
+                  <ProgramIcon src={program.icon} size={20} />
+                  {program.name}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="taskbar-spacer" />
+
+          <button
+            className="theme-toggle"
+            onClick={() => setTheme((current) => (current === "day" ? "night" : "day"))}
+            title="Switch day and night modes"
+          >
+            {theme === "day" ? "☀ Day" : "☾ Night"}
+          </button>
+
+          <div className="system-clock">
+            <span className="system-clock-date">{date}</span>
+            <span>{clock}</span>
+          </div>
+        </footer>
+      </main>
     </SproutProvider>
   );
 }

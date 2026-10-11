@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Nunito } from "next/font/google";
 import "98.css/style.css";
 import "./globals.css";
 
@@ -13,15 +13,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const nunito = Nunito({
+  variable: "--font-nunito",
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
+});
+
 export const metadata: Metadata = {
-  title: "ctrl + alt + study",
-  description:
-    "A Frutiger Aero desktop of study tools and outdoor breaks for UNC students, with Sprout, your study companion.",
+  title: "Bliss.exe",
+  description: "A little more focus. A little more outside.",
+  icons: {
+    icon: "/icons/screensaver.png",
+    apple: "/icons/screensaver.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${nunito.variable}`}
+    >
       <body>{children}</body>
     </html>
   );
