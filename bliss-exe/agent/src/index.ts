@@ -5,6 +5,7 @@ import { Spectrum } from "spectrum-ts";
 import { imessage } from "spectrum-ts/providers/imessage";
 import { startNotifyServer } from "./notify.js";
 import { sendVoiceNote } from "./voice.js";
+import { transcribeVoice } from "./transcribe.js";
 
 async function main() {
   const projectId = process.env.PHOTON_PROJECT_ID;
@@ -62,9 +63,33 @@ weather, calendar, or activities unless they tell you.
   console.log("Sprout is connected and listening for messages.");
 
   for await (const [space, message] of app.messages) {
-    if (message.content.type !== "text") continue;
+    let userText = "";
 
-    const userText = message.content.text.trim();
+    if (message.content.type === "text") {
+      userText = message.content.text.trim();
+    } else if (message.content.type === "voice") {
+      // A spoken message: transcribe it, then treat it like typed text.
+      const { mimeType } = message.content;
+      const audio = await message.content.read();
+
+      console.log(`Incoming voice note (${mimeType}, ${audio.length} bytes).`);
+      userText = (await transcribeVoice(audio, mimeType)) ?? "";
+      console.log("Voice note transcript:", userText || "(none)");
+
+      if (!userText) {
+        try {
+          await space.send(
+            "I couldn't quite make that out. Could you try again, or type it?",
+          );
+        } catch (sendError) {
+          console.error("Could not send transcription fallback:", sendError);
+        }
+        continue;
+      }
+    } else {
+      continue;
+    }
+
     if (!userText) continue;
 
     console.log("Incoming message:", userText);
