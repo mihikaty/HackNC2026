@@ -13,7 +13,6 @@ type StudySpot = {
   seating: string;
   shade: string;
   coordinates: [number, number];
-  icon: string;
   address: string;
   tags: string[];
 };
@@ -25,37 +24,37 @@ const STUDY_SPOTS: StudySpot[] = [
     id: "coker-arboretum", name: "Coker Arboretum", category: "Outdoor",
     description: "A leafy garden with winding paths for a quieter study break.",
     seating: "Benches and nearby lawn", shade: "High", coordinates: [35.9137, -79.0476],
-    icon: "🌳", address: "Coker Arboretum, UNC Chapel Hill", tags: ["quiet", "nature", "reading"],
+    address: "Coker Arboretum, UNC Chapel Hill", tags: ["quiet", "nature", "reading"],
   },
   {
     id: "sitterson-hall", name: "Sitterson Hall", category: "Campus",
     description: "A central computer science building with convenient campus access.",
     seating: "Indoor common areas; check building access", shade: "Mixed", coordinates: [35.9109, -79.0545],
-    icon: "💻", address: "Sitterson Hall, UNC Chapel Hill", tags: ["computing", "group work", "campus"],
+    address: "Sitterson Hall, UNC Chapel Hill", tags: ["computing", "group work", "campus"],
   },
   {
     id: "old-well", name: "Old Well & Polk Place", category: "Outdoor",
     description: "An iconic campus green with open-air space between classes.",
     seating: "Lawn and nearby benches", shade: "Partial", coordinates: [35.9122, -79.0512],
-    icon: "⛲", address: "Old Well, UNC Chapel Hill", tags: ["landmark", "fresh air", "break"],
+    address: "Old Well, UNC Chapel Hill", tags: ["landmark", "fresh air", "break"],
   },
   {
     id: "davis-library", name: "Davis Library", category: "Library",
     description: "A major library option for an indoor study environment.",
     seating: "Indoor desks and study areas", shade: "Indoors", coordinates: [35.9096, -79.0498],
-    icon: "📚", address: "Davis Library, UNC Chapel Hill", tags: ["library", "quiet", "indoor"],
+    address: "Davis Library, UNC Chapel Hill", tags: ["library", "quiet", "indoor"],
   },
   {
     id: "wilson-library", name: "Wilson Library", category: "Library",
     description: "A historic library setting for focused individual work.",
     seating: "Indoor study spaces; check current access", shade: "Indoors", coordinates: [35.9098, -79.0509],
-    icon: "📖", address: "Wilson Library, UNC Chapel Hill", tags: ["library", "reading", "quiet"],
+    address: "Wilson Library, UNC Chapel Hill", tags: ["library", "reading", "quiet"],
   },
   {
     id: "student-union", name: "Student Union", category: "Campus",
     description: "A central campus hub with places to pause, meet, and work.",
     seating: "Indoor and nearby outdoor seating", shade: "Mixed", coordinates: [35.9108, -79.0477],
-    icon: "☕", address: "Student Union, UNC Chapel Hill", tags: ["meeting", "food nearby", "group work"],
+    address: "Student Union, UNC Chapel Hill", tags: ["meeting", "food nearby", "group work"],
   },
 ];
 
@@ -158,7 +157,7 @@ export default function ExploreApp() {
       const marker = L.marker(spot.coordinates, {
         icon: L.divIcon({
           className: "explore-leaflet-icon-shell",
-          html: `<span class="explore-map-pin${selected ? " is-selected" : ""}"><span>${escapeHtml(spot.icon)}</span></span>`,
+          html: `<span class="explore-map-pin${selected ? " is-selected" : ""}">${STUDY_SPOTS.indexOf(spot) + 1}</span>`,
           iconSize: [42, 48], iconAnchor: [21, 42], popupAnchor: [0, -38],
         }),
         title: spot.name,
@@ -239,7 +238,6 @@ export default function ExploreApp() {
               const isSelected = spot.id === selectedLocationId;
               return <article key={spot.id} className={`explore-spot-card${isSelected ? " is-selected" : ""}`}>
                 <button type="button" className="explore-spot-select" onClick={() => selectSpot(spot.id)} aria-pressed={isSelected} aria-label={`Show ${spot.name} on the map`}>
-                  <span className="explore-spot-icon" aria-hidden="true">{spot.icon}</span>
                   <span className="explore-spot-copy"><span className="explore-spot-title">{spot.name}</span><span className="explore-spot-meta">{spot.category}<i />{spot.shade} shade</span><span className="explore-spot-description">{spot.description}</span></span>
                   <span className="explore-chevron" aria-hidden="true">↗</span>
                 </button>

@@ -504,6 +504,48 @@ scrollbar-color: #8ab8e8 transparent;
 scrollbar-width: thin;
 }
 
+/* The classic app surfaces own their full content area. */
+.app-window.focus-window .window-content,
+.app-window.explore-window .window-content,
+.app-window.nature-window .window-content {
+padding: 0;
+background: #c0c0c0;
+color: #222;
+}
+
+.desktop[data-theme="night"] .app-window.focus-window .window-content,
+.desktop[data-theme="night"] .app-window.explore-window .window-content,
+.desktop[data-theme="night"] .app-window.nature-window .window-content {
+background: #1f2937;
+color: #f3f4f6;
+}
+
+.desktop[data-theme="night"] .focus-aero button,
+.desktop[data-theme="night"] .explore-aero button,
+.desktop[data-theme="night"] .nature-fm button {
+color: #ffffff;
+text-shadow: none;
+-webkit-text-fill-color: #ffffff;
+}
+
+.desktop[data-theme="night"] .focus-aero button:disabled,
+.desktop[data-theme="night"] .explore-aero button:disabled,
+.desktop[data-theme="night"] .nature-fm button:disabled {
+color: #c6ced8;
+opacity: 1;
+-webkit-text-fill-color: #c6ced8;
+}
+
+.desktop[data-theme="night"] .focus-aero input,
+.desktop[data-theme="night"] .focus-aero select,
+.desktop[data-theme="night"] .focus-aero textarea,
+.desktop[data-theme="night"] .explore-aero input,
+.desktop[data-theme="night"] .explore-aero select,
+.desktop[data-theme="night"] .nature-fm input {
+color: #ffffff;
+-webkit-text-fill-color: #ffffff;
+}
+
 .window-content::-webkit-scrollbar {
 width: 12px;
 height: 12px;

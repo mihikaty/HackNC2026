@@ -1,0 +1,45 @@
+.nature-fm { --nature-face: var(--button-face, #dfdfdf); --nature-shadow: var(--button-shadow, #808080); --nature-blue: var(--dialog-blue, #000080); padding: 10px; background: var(--surface, #c0c0c0); color: #222; font: 11px "Pixelated MS Sans Serif", Tahoma, sans-serif; }
+.nature-fm *, .nature-fm *::before, .nature-fm *::after { box-sizing: border-box; }
+.nature-fm h2, .nature-fm h3, .nature-fm p { margin-top: 0; }
+.nature-fm h2 { margin-bottom: 3px; font-size: 18px; } .nature-fm h2 span { color: var(--nature-blue); } .nature-fm h3 { margin-bottom: 5px; font-size: 13px; }
+.nature-fm button, .nature-fm input { font: inherit; } .nature-fm button { min-height: 23px; padding: 3px 8px; cursor: pointer; } .nature-fm button:active:not(:disabled) { box-shadow: var(--border-sunken-outer), var(--border-sunken-inner); } .nature-fm button:disabled { cursor: default; opacity: .55; }
+.nature-fm input[type="range"] { width: 100%; accent-color: var(--nature-blue); }
+.nature-fm-sky, .nature-fm-brand-icon, .nature-fm-live-dot, .nature-fm-status-pulse, .nature-fm-equalizer, .nature-fm-note-icon, .nature-fm-sprout-orb, .nature-fm-footer-leaf { display: none; }
+.nature-fm-heading { margin-bottom: 9px; padding: 2px 2px 9px; border-bottom: 1px solid var(--nature-shadow); } .nature-fm-brandline { display: flex; gap: 8px; align-items: center; margin-bottom: 7px; color: #444; font-size: 10px; font-weight: bold; } .nature-fm-title-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; } .nature-fm-kicker { margin-bottom: 4px; color: #444; font-size: 10px; font-weight: bold; } .nature-fm-intro { margin-bottom: 0; color: #444; } .nature-fm-status { padding: 3px 6px; border: 0; background: #fff; box-shadow: var(--border-status-field); white-space: nowrap; }
+.nature-fm-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(250px, .8fr); gap: 9px; } .nature-fm-main-column, .nature-fm-side-column { min-width: 0; }
+.nature-fm-now-playing, .nature-fm-note, .nature-fm-playlist, .nature-fm-sprout { margin-bottom: 9px; padding: 9px; border: 0; background: var(--nature-face); box-shadow: var(--border-window-outer), var(--border-window-inner); } .nature-fm-now-playing { display: grid; grid-template-columns: minmax(140px, .8fr) minmax(0, 1.2fr); gap: 10px; }
+.nature-fm-artwork { position: relative; min-height: 220px; border: 0; background-color: #fff; background-position: center; background-size: cover; box-shadow: var(--border-field); } .nature-fm-art-image { position: absolute; inset: 0; z-index: 1; display: block !important; width: 100%; height: 100%; object-fit: cover; opacity: 1 !important; visibility: visible !important; } .nature-fm-art-image[hidden] { display: none !important; } .nature-fm-art-caption { position: absolute; right: 0; bottom: 0; left: 0; z-index: 2; padding: 4px; border-top: 1px solid var(--nature-shadow); background: var(--nature-face); color: #444; font-size: 10px; }
+.nature-fm-track-content { min-width: 0; } .nature-fm-track-topline { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 5px; margin-bottom: 8px; } .nature-fm-pill, .nature-fm-track-mood, .nature-fm-count { padding: 3px 5px; border: 0; background: #fff; box-shadow: var(--border-status-field); font-size: 10px; } .nature-fm-track-subtitle { margin-bottom: 3px; color: #444; } .nature-fm-track-description { color: #444; line-height: 1.35; } .nature-fm-error { padding: 6px; border: 0; background: #fff; color: #800000; box-shadow: var(--border-field); overflow-wrap: anywhere; }
+.nature-fm-progress { margin-top: 9px; } .nature-fm-time { display: flex; justify-content: space-between; color: #444; font-size: 10px; } .nature-fm-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 9px; } .nature-fm-icon-button, .nature-fm-play-button, .nature-fm-loop-button { border: 0; background: var(--nature-face); box-shadow: var(--border-raised-outer), var(--border-raised-inner); } .nature-fm-play-button { min-width: 112px; } .nature-fm-loop-button.is-active { background: #d6e5f5; box-shadow: var(--border-sunken-outer), var(--border-sunken-inner); } .nature-fm-volume { display: grid; grid-template-columns: auto minmax(60px, 1fr) 38px; align-items: center; gap: 7px; margin-top: 10px; } .nature-fm-volume > span:first-child span { display: none; } .nature-fm-volume-value { text-align: right; }
+.nature-fm-note { display: flex; gap: 9px; align-items: center; background: #d6e5f5; } .nature-fm-note p { margin: 3px 0 0; } .nature-fm-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; } .nature-fm-track-list { display: grid; gap: 4px; } .nature-fm-track-option { display: grid; grid-template-columns: minmax(0, 1fr) 18px; align-items: center; gap: 7px; width: 100%; padding: 6px; border: 0; background: #fff; box-shadow: var(--border-field); text-align: left; } .nature-fm-track-option.is-selected { background: #d6e5f5; box-shadow: inset 1px 1px var(--nature-blue), inset -1px -1px var(--nature-blue); } .nature-fm-option-copy { min-width: 0; } .nature-fm-option-copy strong, .nature-fm-option-copy small { display: block; } .nature-fm-option-copy small { margin-top: 3px; color: #444; } .nature-fm-option-action { text-align: center; }
+.nature-fm-playlist-footer { margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--nature-shadow); color: #444; } .nature-fm-sprout p { line-height: 1.35; } .nature-fm-sprout-action { margin-top: 7px; } .nature-fm-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 9px; padding-top: 7px; border-top: 1px solid var(--nature-shadow); color: #444; }
+@media (max-width: 760px) { .nature-fm-layout { grid-template-columns: 1fr; } .nature-fm-now-playing { grid-template-columns: 1fr; } .nature-fm-artwork { min-height: 150px; } } @media (max-width: 460px) { .nature-fm-title-row { align-items: flex-start; flex-direction: column; } }
+
+/* Readable sizing and theme overrides for the desktop's day/night switch. */
+.nature-fm { font-family: Tahoma, "MS Sans Serif", sans-serif; font-size: 13px; }
+.nature-fm button, .nature-fm input { font-size: 13px; }
+.nature-fm button { min-height: 27px; }
+.nature-fm-kicker, .nature-fm-brandline, .nature-fm-pill, .nature-fm-track-mood, .nature-fm-count, .nature-fm-time, .nature-fm-playlist-footer, .nature-fm-footer { font-size: 11px; }
+.nature-fm-intro, .nature-fm-track-description, .nature-fm-sprout p, .nature-fm-note p { line-height: 1.45; }
+.desktop[data-theme="night"] .nature-fm { --nature-face: #3d3d3d; --nature-shadow: #111; --nature-blue: #9bc7ff; background: #2f2f2f; color: #f4f4f4; }
+.desktop[data-theme="night"] .nature-fm .nature-fm-kicker,
+.desktop[data-theme="night"] .nature-fm .nature-fm-brandline,
+.desktop[data-theme="night"] .nature-fm .nature-fm-intro,
+.desktop[data-theme="night"] .nature-fm .nature-fm-track-subtitle,
+.desktop[data-theme="night"] .nature-fm .nature-fm-track-description,
+.desktop[data-theme="night"] .nature-fm .nature-fm-playlist-footer,
+.desktop[data-theme="night"] .nature-fm .nature-fm-footer { color: #e3e8ef; }
+.desktop[data-theme="night"] .nature-fm .nature-fm-now-playing,
+.desktop[data-theme="night"] .nature-fm .nature-fm-note,
+.desktop[data-theme="night"] .nature-fm .nature-fm-playlist,
+.desktop[data-theme="night"] .nature-fm .nature-fm-sprout { background: #3d3d3d; }
+.desktop[data-theme="night"] .nature-fm .nature-fm-status,
+.desktop[data-theme="night"] .nature-fm .nature-fm-pill,
+.desktop[data-theme="night"] .nature-fm .nature-fm-track-mood,
+.desktop[data-theme="night"] .nature-fm .nature-fm-count,
+.desktop[data-theme="night"] .nature-fm .nature-fm-artwork,
+.desktop[data-theme="night"] .nature-fm .nature-fm-track-option { background: #242424; color: #f4f4f4; }
+.desktop[data-theme="night"] .nature-fm .nature-fm-note,
+.desktop[data-theme="night"] .nature-fm .nature-fm-track-option.is-selected,
+.desktop[data-theme="night"] .nature-fm .nature-fm-loop-button.is-active { background: #1c3d68; }
+.desktop[data-theme="night"] .nature-fm .nature-fm-error { background: #351d1d; color: #ffb7b7; }
