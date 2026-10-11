@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useSprout } from "./SproutProvider";
+import styles from "./SproutApp.module.css";
 
 const STARTERS = [
   "Help me plan a study session",
@@ -10,7 +11,7 @@ const STARTERS = [
 ];
 
 export default function SproutApp() {
-  const { messages, sending, send, phone, setPhone, textStatus } = useSprout();
+  const { messages, sending, send, clearChat, phone, setPhone, textStatus } = useSprout();
   const [draft, setDraft] = useState("");
   const [phoneDraft, setPhoneDraft] = useState("");
   const [phoneError, setPhoneError] = useState("");
@@ -47,42 +48,53 @@ export default function SproutApp() {
   }
 
   return (
-    <div className="sprout-chat">
-      <details className="sprout-texts">
+    <div className={styles.chat}>
+      <header className={styles.chatHeader}>
+        <div>
+          <p className={styles.eyebrow}>AOL-style instant message</p>
+          <h2>Sprout Buddy</h2>
+        </div>
+        <div className={styles.headerActions}>
+          <span className={styles.online}><i /> Online</span>
+          <button className={styles.newChat} type="button" onClick={clearChat} disabled={sending || messages.length === 0}>New Chat</button>
+        </div>
+      </header>
+
+      <details className={styles.texts}>
         <summary>
           📱 Texts from Sprout: {phone ? `on (${phone})` : "off"}
         </summary>
 
         {phone ? (
-          <div className="sprout-texts-body">
+            <div className={styles.textsBody}>
             <p>
               Sprout will text you when a focus timer starts or ends, and when
               you send a study spot to Sprout.
             </p>
             <button
               type="button"
-              className="sprout-chip"
+              className={`${styles.chip} sprout-chip`}
               onClick={() => setPhone("")}
             >
               Turn off and forget my number
             </button>
           </div>
         ) : (
-          <form className="sprout-texts-body" onSubmit={savePhone}>
+          <form className={styles.textsBody} onSubmit={savePhone}>
             <p>
               Want texts when your timer starts or ends, or about weather at
               your study spot? Your number stays in this browser.
             </p>
-            <div className="sprout-form">
+            <div className={styles.form}>
               <input
-                className="sprout-input"
+                className={styles.input}
                 value={phoneDraft}
                 onChange={(event) => setPhoneDraft(event.target.value)}
                 placeholder="+19195551234"
                 aria-label="Phone number for Sprout texts"
                 inputMode="tel"
               />
-              <button className="sprout-send-button" type="submit">
+              <button className={`${styles.sendButton} sprout-send-button`} type="submit">
                 Turn on
               </button>
             </div>
@@ -94,24 +106,22 @@ export default function SproutApp() {
       </details>
 
       <div
-        className="sprout-log"
+        className={styles.log}
         ref={logRef}
         role="log"
         aria-live="polite"
         aria-label="Conversation with Sprout"
       >
         {messages.length === 0 && (
-          <div className="sprout-empty">
-            <div className="sprout-empty-icon" aria-hidden="true">
-              🫧
-            </div>
+          <div className={styles.empty}>
+            <div className={styles.emptyIcon} aria-hidden="true">S</div>
             <p>Hi, I&apos;m Sprout! Ask me anything, or pick a place to start.</p>
-            <div className="sprout-starters">
+            <div className={styles.starters}>
               {STARTERS.map((starter) => (
                 <button
                   key={starter}
                   type="button"
-                  className="sprout-chip"
+                  className={`${styles.chip} sprout-chip`}
                   disabled={sending}
                   onClick={() => send(starter)}
                 >
@@ -125,22 +135,22 @@ export default function SproutApp() {
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`sprout-bubble sprout-bubble-${message.role}`}
+            className={`${styles.bubble} ${message.role === "user" ? styles.userBubble : styles.sproutBubble}`}
           >
             {message.text}
           </div>
         ))}
 
         {sending && (
-          <div className="sprout-bubble sprout-bubble-sprout sprout-typing">
+          <div className={`${styles.bubble} ${styles.sproutBubble} ${styles.typing}`}>
             Sprout is thinking…
           </div>
         )}
       </div>
 
-      <form className="sprout-form" onSubmit={submit}>
+      <form className={styles.form} onSubmit={submit}>
         <input
-          className="sprout-input"
+          className={styles.input}
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           placeholder="Message Sprout…"
@@ -148,7 +158,7 @@ export default function SproutApp() {
           maxLength={1000}
         />
         <button
-          className="sprout-send-button"
+          className={`${styles.sendButton} sprout-send-button`}
           type="submit"
           disabled={sending || !draft.trim()}
         >

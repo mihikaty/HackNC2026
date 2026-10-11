@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { SendToSproutButton } from "@/app/components/sprout/SendToSproutButton";
+import styles from "./WeatherApp.module.css";
 import {
   SPOTS,
   uvLabel,
@@ -67,17 +68,33 @@ export default function WeatherApp() {
   const weather = data?.weather;
   const verdict = data?.verdict;
   const spotName = SPOTS[spot].name;
+  const verdictClass = verdict
+    ? {
+        go: styles.weatherVerdictGo,
+        caution: styles.weatherVerdictCaution,
+        "stay-in": styles.weatherVerdictStayIn,
+        unknown: styles.weatherVerdictUnknown,
+      }[verdict.status]
+    : "";
 
   return (
-    <div className="weather-app">
-      <div className="weather-spots" role="tablist" aria-label="Study spot">
+    <div className={styles.weatherApp}>
+      <header className={styles.header}>
+        <div>
+          <p className={styles.eyebrow}>WEATHER.EXE</p>
+          <h2>Outdoor conditions</h2>
+          <p className={styles.subtitle}>Check the next few hours before choosing a study spot.</p>
+        </div>
+        <span className={styles.status}>LIVE CHECK</span>
+      </header>
+      <div className={styles.weatherSpots} role="tablist" aria-label="Study spot">
         {SPOT_IDS.map((id) => (
           <button
             key={id}
             type="button"
             role="tab"
             aria-selected={id === spot}
-            className={`weather-spot${id === spot ? " weather-spot-selected" : ""}`}
+            className={`${styles.weatherSpot} ${id === spot ? styles.weatherSpotSelected : ""}`}
             onClick={() => choose(id)}
           >
             {SPOTS[id].name}
@@ -85,12 +102,12 @@ export default function WeatherApp() {
         ))}
       </div>
 
-      {loading && <p className="weather-note">Checking the sky…</p>}
+      {loading && <p className={styles.weatherNote}>Checking the sky…</p>}
 
       {!loading && error && (
-        <div className="weather-note" role="alert">
+        <div className={styles.weatherNote} role="alert">
           <p>Couldn&apos;t load the weather: {error}</p>
-          <button type="button" className="sprout-chip" onClick={retry}>
+          <button type="button" className={styles.retryButton} onClick={retry}>
             Try again
           </button>
         </div>
@@ -99,7 +116,7 @@ export default function WeatherApp() {
       {!loading && weather && verdict && (
         <>
           <section
-            className={`weather-verdict weather-verdict-${verdict.status}`}
+            className={`${styles.weatherVerdict} ${verdictClass}`}
             aria-live="polite"
           >
             <strong>{verdict.headline}</strong>
@@ -112,12 +129,12 @@ export default function WeatherApp() {
             )}
           </section>
 
-          <section className="weather-now" aria-label={`Weather at ${spotName}`}>
-            <div className="weather-icon" aria-hidden="true">
+          <section className={styles.weatherNow} aria-label={`Weather at ${spotName}`}>
+            <div className={styles.weatherIcon} aria-hidden="true">
               {weather.icon}
             </div>
             <div>
-              <div className="weather-temp">{Math.round(weather.tempF)}°F</div>
+              <div className={styles.weatherTemp}>{Math.round(weather.tempF)}°F</div>
               <div>
                 {weather.conditions} · feels like{" "}
                 {Math.round(weather.feelsLikeF)}°F
@@ -125,7 +142,7 @@ export default function WeatherApp() {
             </div>
           </section>
 
-          <dl className="weather-stats">
+          <dl className={styles.weatherStats}>
             <div>
               <dt>UV index</dt>
               <dd>
@@ -142,9 +159,9 @@ export default function WeatherApp() {
             </div>
           </dl>
 
-          <section className="weather-hours" aria-label="Next hours">
+          <section className={styles.weatherHours} aria-label="Next hours">
             {weather.hours.map((hour) => (
-              <div key={hour.time} className="weather-hour">
+              <div key={hour.time} className={styles.weatherHour}>
                 <span>{hourLabel(hour.time)}</span>
                 <strong>{Math.round(hour.tempF)}°</strong>
                 <span>☔ {hour.rainChance}%</span>
@@ -153,7 +170,7 @@ export default function WeatherApp() {
             ))}
           </section>
 
-          <div className="weather-footer">
+          <div className={styles.weatherFooter}>
             <span>
               Updated{" "}
               {new Date(weather.fetchedAt).toLocaleTimeString([], {
