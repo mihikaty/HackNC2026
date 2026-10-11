@@ -104,37 +104,42 @@ export default function TouchGrassApp() {
   const [storageReady, setStorageReady] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const saved = JSON.parse(raw) as Partial<SavedProgress>;
-        const validQuestIds = new Set(questPool.map((quest) => quest.id));
-        const restoredCompleted = Array.isArray(saved.completedQuestIds)
-          ? saved.completedQuestIds.filter((id): id is string => typeof id === "string" && validQuestIds.has(id))
-          : [];
-        const restoredActive = createInitialActiveQuests(
-          restoredCompleted,
-          Array.isArray(saved.activeQuestIds) ? saved.activeQuestIds.filter((id): id is string => typeof id === "string") : [],
-        );
-        const validBingoIds = new Set(bingoSquares.map((square) => square.id));
-        const restoredBingo = Array.isArray(saved.completedBingoIds)
-          ? [...new Set(saved.completedBingoIds.filter((id): id is string => typeof id === "string" && validBingoIds.has(id)))]
-          : [];
-        const validLineIds = new Set(bingoLines.map((_, index) => String(index)));
-        const restoredLines = Array.isArray(saved.completedBingoLines)
-          ? [...new Set(saved.completedBingoLines.filter((id): id is string => typeof id === "string" && validLineIds.has(id)))]
-          : [];
+    // Load saved progress after mount so server and client render the same.
+    const restore = window.setTimeout(() => {
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw) as Partial<SavedProgress>;
+          const validQuestIds = new Set(questPool.map((quest) => quest.id));
+          const restoredCompleted = Array.isArray(saved.completedQuestIds)
+            ? saved.completedQuestIds.filter((id): id is string => typeof id === "string" && validQuestIds.has(id))
+            : [];
+          const restoredActive = createInitialActiveQuests(
+            restoredCompleted,
+            Array.isArray(saved.activeQuestIds) ? saved.activeQuestIds.filter((id): id is string => typeof id === "string") : [],
+          );
+          const validBingoIds = new Set(bingoSquares.map((square) => square.id));
+          const restoredBingo = Array.isArray(saved.completedBingoIds)
+            ? [...new Set(saved.completedBingoIds.filter((id): id is string => typeof id === "string" && validBingoIds.has(id)))]
+            : [];
+          const validLineIds = new Set(bingoLines.map((_, index) => String(index)));
+          const restoredLines = Array.isArray(saved.completedBingoLines)
+            ? [...new Set(saved.completedBingoLines.filter((id): id is string => typeof id === "string" && validLineIds.has(id)))]
+            : [];
 
-        setGardenScore(typeof saved.gardenScore === "number" && Number.isFinite(saved.gardenScore) ? Math.max(0, saved.gardenScore) : 0);
-        setCompletedQuestIds([...new Set(restoredCompleted)]);
-        setActiveQuests(restoredActive);
-        setCompletedBingoIds(restoredBingo);
-        setCompletedBingoLines(restoredLines);
+          setGardenScore(typeof saved.gardenScore === "number" && Number.isFinite(saved.gardenScore) ? Math.max(0, saved.gardenScore) : 0);
+          setCompletedQuestIds([...new Set(restoredCompleted)]);
+          setActiveQuests(restoredActive);
+          setCompletedBingoIds(restoredBingo);
+          setCompletedBingoLines(restoredLines);
+        }
+      } catch {
+        // If stored data is unavailable or malformed, continue with a clean game.
       }
-    } catch {
-      // If stored data is unavailable or malformed, continue with a clean game.
-    }
-    setStorageReady(true);
+      setStorageReady(true);
+    }, 0);
+
+    return () => window.clearTimeout(restore);
   }, []);
 
   useEffect(() => {
