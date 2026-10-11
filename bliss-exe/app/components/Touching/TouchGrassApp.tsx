@@ -375,6 +375,18 @@ export default function TouchGrassApp() {
           </div>
         )}
 
+        <div className="sprout-app-bar">
+          <SendToSproutButton
+            appId="touchgrass"
+            text={
+              activeQuests.length > 0
+                ? "Which of my quests should I do for my break?"
+                : "I finished every quest! What should I do next?"
+            }
+            context={`TouchGrass quests. Garden score: ${gardenScore} pts. Completed: ${completedCount}. Active quests: ${activeQuests.length > 0 ? activeQuests.map((quest) => `${quest.title} (+${quest.points} pts) - ${quest.description}`).join("; ") : "none"}.`}
+          />
+        </div>
+
         <footer className={styles.footer}>
           <span aria-hidden="true">✦</span>
           Take a break, Tar Heel.
