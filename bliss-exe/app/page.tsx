@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { FocusApp } from "@/components/FocusApp";
+import { FocusApp } from "@/components/focus/FocusApp";
 import NatureFmApp from "@/components/NatureFM";
 import TouchGrassApp from "@/components/Touching/TouchGrassApp";
 import ExploreApp from "@/app/components/explore/ExploreApp";
@@ -87,7 +87,9 @@ export default function Home() {
   function openApp(id: ProgramId) {
     setStartMenuOpen(false);
     if (windows.some((win) => win.id === id)) { bringToFront(id); return; }
-    const offset = SPAWN_OFFSETS[windows.length % SPAWN_OFFSETS.length];
+    const offset = window.innerWidth <= 640
+      ? { x: 12, y: 72 }
+      : SPAWN_OFFSETS[windows.length % SPAWN_OFFSETS.length];
     zCounter.current += 1;
     setWindows((current) => [...current, { id, x: offset.x, y: offset.y, minimized: false, maximized: false, zIndex: zCounter.current }]);
     setActiveId(id);
