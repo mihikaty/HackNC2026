@@ -175,6 +175,8 @@ export default function NatureFmApp() {
         <div className="nature-fm-main-column">
           <section className="nature-fm-now-playing glass-panel" aria-label="Current soundscape">
             <div className="nature-fm-artwork" style={{ backgroundImage: `url(${track.image})` }}>
+              {/* Plain <img>: local artwork with an onError fallback. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className="nature-fm-art-image" src={track.image} alt={`${track.title} artwork`} onError={(event) => { event.currentTarget.hidden = true; }} />
               <div className="nature-fm-art-glow" />
               <div className="nature-fm-art-sun" />
