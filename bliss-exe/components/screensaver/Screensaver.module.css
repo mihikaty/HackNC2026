@@ -1,0 +1,200 @@
+.screensaver {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: #eef5ff;
+}
+
+.stage {
+  position: relative;
+  min-height: 300px;
+  height: min(58vh, 520px);
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(190, 218, 255, 0.55);
+  border-radius: 9px;
+  background-color: #071022;
+  background-image:
+    linear-gradient(180deg, rgba(4, 10, 25, 0.18), rgba(4, 10, 25, 0.04) 48%, rgba(4, 10, 25, 0.52)),
+    url("/screensaver/galaxy.jpg");
+  background-position: center;
+  background-size: cover;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(5, 17, 45, 0.25);
+}
+
+.hud,
+.caption {
+  position: absolute;
+  z-index: 1;
+  right: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
+  pointer-events: none;
+}
+
+.hud {
+  top: 15px;
+}
+
+.eyebrow,
+.signal,
+.coordinates {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+.eyebrow {
+  color: rgba(237, 245, 255, 0.9);
+}
+
+.signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #d8ffe4;
+}
+
+.signal span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #91ffae;
+  box-shadow: 0 0 10px #91ffae;
+}
+
+.trail {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.iceBlock {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: grid;
+  width: clamp(42px, 8.6%, 71px);
+  aspect-ratio: 1;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid rgba(225, 248, 255, 0.88);
+  border-radius: 0;
+  background:
+    linear-gradient(135deg, rgba(236, 252, 255, 0.4), transparent 35% 68%, rgba(127, 207, 255, 0.23)),
+    rgba(138, 213, 255, 0.16);
+  box-shadow:
+    inset 0 0 0 4px rgba(173, 231, 255, 0.2),
+    inset 0 0 24px rgba(219, 247, 255, 0.3),
+    0 8px 22px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(2px);
+  will-change: transform;
+}
+
+.fish {
+  display: block;
+  width: 86%;
+  height: 86%;
+  object-fit: contain;
+  user-select: none;
+  filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.32));
+}
+
+.iceShine {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  background: linear-gradient(118deg, rgba(255, 255, 255, 0.34), transparent 30% 74%, rgba(255, 255, 255, 0.11));
+  pointer-events: none;
+}
+
+.caption {
+  bottom: 15px;
+  color: rgba(242, 247, 255, 0.92);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.coordinates {
+  color: rgba(226, 237, 255, 0.72);
+  font-size: 8px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #52677a;
+  font-size: 12px;
+}
+
+.controls p {
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.pauseButton {
+  flex: 0 0 auto;
+  padding: 7px 12px;
+  border: 1px solid #a8c5df;
+  border-radius: 999px;
+  color: #214b6d;
+  background: #f5fbff;
+  font-size: 11px;
+  font-weight: 800;
+  transition: background 140ms ease, transform 140ms ease;
+}
+
+.pauseButton:hover {
+  transform: translateY(-1px);
+  background: #e4f4ff;
+}
+
+.pauseButton:focus-visible {
+  outline: 3px solid #ffdf72;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iceBlock {
+    will-change: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .stage {
+    min-height: 260px;
+    height: 48vh;
+  }
+
+  .hud,
+  .caption {
+    right: 10px;
+    left: 10px;
+  }
+
+  .eyebrow,
+  .coordinates {
+    font-size: 8px;
+  }
+
+  .caption {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+}

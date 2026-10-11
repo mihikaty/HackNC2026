@@ -7,6 +7,7 @@ import TouchGrassApp from "@/components/Touching/TouchGrassApp";
 import ExploreApp from "@/app/components/explore/ExploreApp";
 import SproutApp from "@/components/sprout/SproutApp";
 import { SproutProvider } from "@/components/sprout/SproutProvider";
+import Screensaver from "@/components/screensaver/Screensaver";
 
 const PROGRAMS = [
   { id: "focus", name: "Focus.exe", icon: "⏱️", description: "Your personal study timer and task space.", next: "Build a focus timer, task list, and session history here." },
@@ -15,6 +16,7 @@ const PROGRAMS = [
   { id: "touchgrass", name: "TouchGrass.exe", icon: "🌱", description: "Take a tiny break away from your screen.", next: "Build outdoor challenges, activity instructions, and optional progress logging here." },
   { id: "weather", name: "Weather.exe", icon: "🌤️", description: "Find out whether it is a good time to go outside.", next: "Connect a weather API and generate weather-aware recommendations here." },
   { id: "sprout", name: "Sprout.exe", icon: "🫧", description: "Your study and outdoor-break companion.", next: "Connect the chat interface to the Sprout backend and Photon iMessage agent." },
+  { id: "screensaver", name: "Screensaver.exe", icon: "🐠", description: "A little fish swimming through a galaxy.", next: "Watch a fish drift through deep space." },
 ] as const;
 
 type ProgramId = (typeof PROGRAMS)[number]["id"];
@@ -32,6 +34,7 @@ type WindowState = {
 const SPAWN_OFFSETS = [
   { x: 140, y: 55 }, { x: 175, y: 85 }, { x: 210, y: 45 },
   { x: 155, y: 105 }, { x: 190, y: 70 }, { x: 145, y: 90 },
+  { x: 205, y: 110 },
 ];
 
 export default function Home() {
@@ -138,7 +141,7 @@ export default function Home() {
         const isActive = activeId === win.id;
         return <section key={win.id} className={`app-window resizable${isActive ? " active" : ""}${win.maximized ? " maximized" : ""}`} style={win.maximized ? { zIndex: win.zIndex } : { transform: `translate(${win.x}px, ${win.y}px)`, zIndex: win.zIndex, display: win.minimized ? "none" : "flex" }} onMouseDown={() => bringToFront(win.id)} aria-label={program.name}>
           <div className="window-titlebar" style={{ cursor: win.maximized ? "default" : "grab" }} onMouseDown={(event) => startDrag(event, win.id)} onDoubleClick={() => toggleMaximize(win.id)}><div className="window-title"><span>{program.icon}</span><span>{program.name}</span></div><div className="window-controls"><button className="window-control" onClick={(event) => { event.stopPropagation(); minimizeWindow(win.id); }} aria-label={`Minimize ${program.name}`} title="Minimize">─</button><button className="window-control" onClick={(event) => { event.stopPropagation(); toggleMaximize(win.id); }} aria-label={win.maximized ? `Restore ${program.name}` : `Maximize ${program.name}`} title={win.maximized ? "Restore" : "Maximize"}>{win.maximized ? "❐" : "□"}</button><button className="window-close" onClick={(event) => { event.stopPropagation(); closeApp(win.id); }} aria-label={`Close ${program.name}`} title="Close">×</button></div></div>
-          <div className="window-content">{win.id === "focus" ? <FocusApp /> : win.id === "nature" ? <NatureFmApp /> : win.id === "touchgrass" ? <TouchGrassApp /> : win.id === "explore" ? <ExploreApp /> : win.id === "sprout" ? <SproutApp /> : <><div className="program-hero-icon">{program.icon}</div><h2>{program.name}</h2><p className="program-description">{program.description}</p><div className="program-placeholder"><span className="placeholder-label">COMING TO THIS WINDOW</span><p>{program.next}</p></div></>}</div>
+          <div className="window-content">{win.id === "focus" ? <FocusApp /> : win.id === "nature" ? <NatureFmApp /> : win.id === "touchgrass" ? <TouchGrassApp /> : win.id === "explore" ? <ExploreApp /> : win.id === "sprout" ? <SproutApp /> : win.id === "screensaver" ? <Screensaver /> : <><div className="program-hero-icon">{program.icon}</div><h2>{program.name}</h2><p className="program-description">{program.description}</p><div className="program-placeholder"><span className="placeholder-label">COMING TO THIS WINDOW</span><p>{program.next}</p></div></>}</div>
         </section>;
       })}
 
