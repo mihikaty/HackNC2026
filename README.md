@@ -22,6 +22,9 @@ Welcome to ctrl + alt + study. In this desktop application there are a multitude
 7. Screensaver.exe:
   For a bit of classic Frutiger Aero nostalgia, Screensaver.exe provides just that. Featuring a fish bouncing across the screen in a cosmic aquarium in a galaxy far away, it encourages users to patiently wait for the perfect moment when the fish hits a corner exactly right.
 
+## Citations
+We used AI tools, including Claude, ChatGPT, Gemini, and Copilot, to assist with brainstorming, development, and debugging. Photon is also part of our work on bringing Sprout beyond a conventional browser-based experience.
+
 ## Running it
 
 Setup, API keys, and how to run the website and the iMessage agent are in [bliss-exe/README.md](bliss-exe/README.md).
