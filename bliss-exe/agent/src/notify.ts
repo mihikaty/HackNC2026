@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import { imessage } from "spectrum-ts/providers/imessage";
 import type { Spectrum } from "spectrum-ts";
+import { sendVoiceNote } from "./voice.js";
 
 // The website's server POSTs { to, text } here and Sprout texts that number.
 // Bound to localhost only; set SPROUT_NOTIFY_SECRET in both .env files to
@@ -44,7 +45,7 @@ export function startNotifyServer(app: App) {
     });
 
     req.on("end", async () => {
-      let payload: { to?: unknown; text?: unknown };
+      let payload: { to?: unknown; text?: unknown; voice?: unknown };
 
       try {
         payload = JSON.parse(raw);
@@ -79,9 +80,14 @@ export function startNotifyServer(app: App) {
       try {
         const space = await imessage(app).space.create(to);
 
-        await space.send(text.trim().slice(0, MAX_TEXT));
+        const message = text.trim().slice(0, MAX_TEXT);
+
+        await space.send(message);
         console.log("Proactive text sent.");
         reply(200, { ok: true });
+
+        // Optional spoken copy, after the text. Never affects the response.
+        if (payload.voice === true) void sendVoiceNote(space, message);
       } catch (error) {
         console.error("Proactive text failed:", error);
         reply(502, { error: "Could not send text" });

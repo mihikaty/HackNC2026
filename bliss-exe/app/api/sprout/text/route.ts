@@ -89,7 +89,12 @@ export async function POST(request: Request) {
     const response = await fetch(NOTIFY_URL, {
       method: "POST",
       headers,
-      body: JSON.stringify({ to: body.phone, text }),
+      // Timer-finish texts also get a spoken voice note.
+      body: JSON.stringify({
+        to: body.phone,
+        text,
+        voice: body.kind === "timer-end",
+      }),
       signal: AbortSignal.timeout(15_000),
     });
 

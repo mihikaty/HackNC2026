@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ChangeEvent } from "react";
 import { SendToSproutButton } from "@/app/components/sprout/SendToSproutButton";
+import WeatherAmbience from "@/app/components/weather/WeatherAmbience";
 import "./nature.css";
 
 const TRACKS = [
@@ -286,6 +287,8 @@ export default function NatureFmApp() {
             </div>
             <div className="nature-fm-playlist-footer"><span className="nature-fm-footer-leaf">❋</span> Curated for a calmer study session</div>
           </section>
+
+          <WeatherAmbience />
 
           <section className="nature-fm-sprout glass-panel">
             <div className="nature-fm-sprout-orb" aria-hidden="true">🫧</div>

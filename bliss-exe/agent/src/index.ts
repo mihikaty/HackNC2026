@@ -4,6 +4,7 @@ import { GoogleGenAI } from "@google/genai";
 import { Spectrum } from "spectrum-ts";
 import { imessage } from "spectrum-ts/providers/imessage";
 import { startNotifyServer } from "./notify.js";
+import { sendVoiceNote } from "./voice.js";
 
 async function main() {
   const projectId = process.env.PHOTON_PROJECT_ID;
@@ -98,6 +99,10 @@ weather, calendar, or activities unless they tell you.
 
         await space.send(reply);
         console.log("Reply sent successfully.");
+
+        // Follow the text with a voice note. Not awaited, so it never delays
+        // or breaks the text reply.
+        void sendVoiceNote(space, reply);
       });
     } catch (error) {
       console.error("Gemini or reply error:", error);
