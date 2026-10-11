@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from "react";
-import { SendToSproutButton } from "@/components/sprout/SendToSproutButton";
+import { SendToSproutButton } from "@/app/components/sprout/SendToSproutButton";
 import "./focus.css";
 
 type StudyTask = {

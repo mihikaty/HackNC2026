@@ -7,7 +7,7 @@ import {
   useState,
   type ChangeEvent,
 } from "react";
-import { SendToSproutButton } from "@/components/sprout/SendToSproutButton";
+import { SendToSproutButton } from "@/app/components/sprout/SendToSproutButton";
 
 const TRACKS = [
   {
