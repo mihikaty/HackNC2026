@@ -5,7 +5,7 @@ import { voice } from "spectrum-ts";
 // Every failure path resolves quietly: voice is a bonus on top of the text,
 // so it must never break or delay a reply.
 
-const VOICE_ID = process.env.ELEVENLABS_VOICE_ID || "7S2T8BXC9fy6yD5LKJBh";
+const VOICE_ID = process.env.ELEVENLABS_VOICE_ID || "btaSeNTVh1pGx4pjFzub";
 const MODEL_ID = "eleven_flash_v2_5";
 const MAX_CHARS = 450; // keeps free-tier credits and listening time down
 

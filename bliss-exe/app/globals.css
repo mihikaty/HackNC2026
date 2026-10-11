@@ -2107,13 +2107,15 @@ transition-duration: 0.01ms !important;
 .ambience-panel {
   display: grid;
   gap: 8px;
-  padding: 10px;
-  border: 2px solid #808080;
-  border-top-color: #ffffff;
-  border-left-color: #ffffff;
-  background: #c0c0c0;
-  color: #111111;
-  font-size: 12px;
+  margin-bottom: 9px;
+  padding: 9px;
+  border: 0;
+  background: var(--nature-face, #dfdfdf);
+  color: #222;
+  font-size: 11px;
+  box-shadow:
+    var(--border-window-outer, inset -1px -1px #0a0a0a, inset 1px 1px #fff),
+    var(--border-window-inner, inset -2px -2px #808080, inset 2px 2px #dfdfdf);
 }
 
 .ambience-title {
@@ -2151,4 +2153,67 @@ transition-duration: 0.01ms !important;
 .ambience-note {
   margin: 0;
   font-size: 11px;
+}
+
+/* ---------- Win98-style sliders for Nature.fm volume controls ----------
+   The theme draws these as a 2px line with no visible handle, which is nearly
+   impossible to grab. Give them a real track, a handle and a taller hit area. */
+
+.nature-fm input[type="range"],
+.ambience-panel input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 22px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.nature-fm input[type="range"]::-webkit-slider-runnable-track,
+.ambience-panel input[type="range"]::-webkit-slider-runnable-track {
+  box-sizing: border-box;
+  height: 6px;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #ffffff;
+  box-shadow: inset 1px 1px 0 #0a0a0a;
+}
+
+.nature-fm input[type="range"]::-webkit-slider-thumb,
+.ambience-panel input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 20px;
+  margin-top: -8px;
+  border: 0;
+  border-radius: 0;
+  background: #c0c0c0;
+  box-shadow:
+    inset -1px -1px 0 #0a0a0a,
+    inset 1px 1px 0 #ffffff,
+    inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #dfdfdf;
+}
+
+.nature-fm input[type="range"]::-moz-range-track,
+.ambience-panel input[type="range"]::-moz-range-track {
+  box-sizing: border-box;
+  height: 6px;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #ffffff;
+}
+
+.nature-fm input[type="range"]::-moz-range-thumb,
+.ambience-panel input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 20px;
+  border: 0;
+  border-radius: 0;
+  background: #c0c0c0;
+  box-shadow:
+    inset -1px -1px 0 #0a0a0a,
+    inset 1px 1px 0 #ffffff,
+    inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #dfdfdf;
 }
