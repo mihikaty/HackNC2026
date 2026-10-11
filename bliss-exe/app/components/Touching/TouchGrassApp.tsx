@@ -182,11 +182,6 @@ export default function TouchGrassApp() {
 
   const completedCount = completedQuestIds.length;
 
-  const availablePoints = activeQuests.reduce(
-    (total, quest) => total + quest.points,
-    0,
-  );
-
   const replacementQuestsAvailable = questPool.filter(
     (quest) =>
       !completedQuestIds.includes(quest.id) &&
