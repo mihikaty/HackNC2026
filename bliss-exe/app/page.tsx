@@ -6,6 +6,7 @@ import NatureFmApp from "@/components/NatureFM";
 import TouchGrassApp from "@/components/Touching/TouchGrassApp";
 import ExploreApp from "@/app/components/explore/ExploreApp";
 import SproutApp from "@/components/sprout/SproutApp";
+import WeatherApp from "@/components/weather/WeatherApp";
 import { SproutProvider } from "@/components/sprout/SproutProvider";
 
 const PROGRAMS = [
@@ -136,7 +137,7 @@ export default function Home() {
         const isActive = activeId === win.id;
         return <section key={win.id} className={`app-window resizable${isActive ? " active" : ""}${win.maximized ? " maximized" : ""}`} style={win.maximized ? { zIndex: win.zIndex } : { transform: `translate(${win.x}px, ${win.y}px)`, zIndex: win.zIndex, display: win.minimized ? "none" : "flex" }} onMouseDown={() => bringToFront(win.id)} aria-label={program.name}>
           <div className="window-titlebar" style={{ cursor: win.maximized ? "default" : "grab" }} onMouseDown={(event) => startDrag(event, win.id)} onDoubleClick={() => toggleMaximize(win.id)}><div className="window-title"><span>{program.icon}</span><span>{program.name}</span></div><div className="window-controls"><button className="window-control" onClick={(event) => { event.stopPropagation(); minimizeWindow(win.id); }} aria-label={`Minimize ${program.name}`} title="Minimize">─</button><button className="window-control" onClick={(event) => { event.stopPropagation(); toggleMaximize(win.id); }} aria-label={win.maximized ? `Restore ${program.name}` : `Maximize ${program.name}`} title={win.maximized ? "Restore" : "Maximize"}>{win.maximized ? "❐" : "□"}</button><button className="window-close" onClick={(event) => { event.stopPropagation(); closeApp(win.id); }} aria-label={`Close ${program.name}`} title="Close">×</button></div></div>
-          <div className="window-content">{win.id === "focus" ? <FocusApp /> : win.id === "nature" ? <NatureFmApp /> : win.id === "touchgrass" ? <TouchGrassApp /> : win.id === "explore" ? <ExploreApp /> : win.id === "sprout" ? <SproutApp /> : <><div className="program-hero-icon">{program.icon}</div><h2>{program.name}</h2><p className="program-description">{program.description}</p><div className="program-placeholder"><span className="placeholder-label">COMING TO THIS WINDOW</span><p>{program.next}</p></div></>}</div>
+          <div className="window-content">{win.id === "focus" ? <FocusApp /> : win.id === "nature" ? <NatureFmApp /> : win.id === "touchgrass" ? <TouchGrassApp /> : win.id === "explore" ? <ExploreApp /> : win.id === "sprout" ? <SproutApp /> : win.id === "weather" ? <WeatherApp /> : <><div className="program-hero-icon">{program.icon}</div><h2>{program.name}</h2><p className="program-description">{program.description}</p><div className="program-placeholder"><span className="placeholder-label">COMING TO THIS WINDOW</span><p>{program.next}</p></div></>}</div>
         </section>;
       })}
 
