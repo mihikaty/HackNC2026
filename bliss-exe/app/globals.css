@@ -1,6 +1,6 @@
 
 /* =========================================================
-   BLISS.EXE | Frutiger Aero meets Windows XP
+   ctrl + alt + study | Frutiger Aero meets Windows XP
    ========================================================= */
 
 :root {
@@ -156,9 +156,9 @@ text-shadow: 0 2px 5px rgba(0, 35, 80, 0.5);
 }
 
 .desktop-brand {
-font-size: 13px;
+font-size: 14px;
 font-weight: 800;
-letter-spacing: 0.19em;
+letter-spacing: 0.05em;
 }
 
 .desktop-subtitle {

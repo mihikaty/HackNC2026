@@ -111,7 +111,7 @@ export function FocusApp() {
       : "No assignments have been added yet.";
 
     return [
-      "The user is using Focus.exe, a study planner and Pomodoro timer inside Bliss.exe.",
+      "The user is using Focus.exe, a study planner and Pomodoro timer inside ctrl + alt + study.",
       `Selected focus task: ${selectedTask?.title ?? "No task selected"}.`,
       `Selected task details: ${selectedTask?.notes || "No extra details provided"}.`,
       `Selected task priority: ${selectedTask?.priority ?? "Not set"}.`,
