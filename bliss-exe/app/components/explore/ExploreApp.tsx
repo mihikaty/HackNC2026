@@ -4,6 +4,7 @@ import { useState } from "react";
 import ExploreMap from "./ExploreMap";
 import LocationCard from "./LocationCard";
 import styles from "./ExploreApp.module.css";
+import { useSprout } from "@/components/sprout/SproutProvider";
 
 const locations = [
   {
@@ -38,8 +39,18 @@ export default function ExploreApp() {
     locations.find((location) => location.id === selectedLocationId) ??
     locations[0];
 
+  const { sendFromApp } = useSprout();
+
   const handleSendToSprout = (locationId: string) => {
-    console.log(locationId);
+    const location = locations.find((item) => item.id === locationId);
+
+    if (!location) return;
+
+    sendFromApp({
+      appId: "explore",
+      text: `Can you help me plan a study session at ${location.name}?`,
+      context: `Campus study spot "${location.name}": ${location.description} Seating: ${location.seating}. Shade: ${location.shade}.`,
+    });
   };
 
   return (
@@ -54,7 +65,10 @@ export default function ExploreApp() {
         </p>
       </header>
 
-      <ExploreMap />
+      <ExploreMap
+        selectedLocationId={selectedLocationId}
+        onSelectLocation={setSelectedLocationId}
+      />
 
       <section
         className={styles.selectedPanel}

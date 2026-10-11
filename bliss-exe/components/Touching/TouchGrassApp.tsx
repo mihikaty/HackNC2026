@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import styles from "./TouchGrassApp.module.css";
+import { SendToSproutButton } from "@/components/sprout/SendToSproutButton";
 
 type Quest = {
   id: string;
