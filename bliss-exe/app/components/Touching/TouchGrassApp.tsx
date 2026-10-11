@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import styles from "./TouchGrassApp.module.css";
-import { SendToSproutButton } from "@/components/sprout/SendToSproutButton";
+import { SendToSproutButton } from "@/app/components/sprout/SendToSproutButton";
 
 type Quest = {
   id: string;
@@ -112,6 +112,42 @@ const questPool: Quest[] = [
   },
 ];
 
+type PlantFact = {
+  text: string;
+  icon: string;
+};
+
+const plantFacts: PlantFact[] = [
+  {
+    icon: "🌳",
+    text: "Coker Arboretum was created in 1903 and covers about five acres of UNC-Chapel Hill campus.",
+  },
+  {
+    icon: "🌿",
+    text: "Coker Arboretum contains more than 500 species of trees, plants, and shrubs.",
+  },
+  {
+    icon: "🌱",
+    text: "The North Carolina Botanical Garden is part of UNC-Chapel Hill and focuses on southeastern native plants.",
+  },
+  {
+    icon: "🪴",
+    text: "UNC’s Botanical Garden includes collections featuring native plants, water gardens, and carnivorous plants.",
+  },
+  {
+    icon: "🪰",
+    text: "Venus flytraps naturally grow only within a limited region near Wilmington, North Carolina.",
+  },
+  {
+    icon: "🥕",
+    text: "The Carolina Community Garden brings members of the UNC community together to grow and share produce.",
+  },
+  {
+    icon: "🍃",
+    text: "Battle Park is a forested natural area near campus that provides habitat for native plant and animal species.",
+  },
+];
+
 function getRandomQuest(quests: Quest[]): Quest | null {
   if (quests.length === 0) {
     return null;
@@ -134,6 +170,15 @@ export default function TouchGrassApp() {
   const [gardenScore, setGardenScore] = useState<number>(0);
 
   const sprouts = Math.floor(gardenScore / 20);
+
+  const currentPlantFact =
+    sprouts === 0
+      ? {
+         icon: "🌱",
+         text: "Earn your first sprout by collecting 20 garden points.",
+        }
+      : plantFacts[(sprouts - 1) % plantFacts.length];
+
 
   const completedCount = completedQuestIds.length;
 
@@ -252,9 +297,28 @@ export default function TouchGrassApp() {
   </div>
 </section>
 
+<section
+  className={styles.funFact}
+  aria-live="polite"
+  aria-label="UNC plant fun fact"
+>
+  <div className={styles.funFactIcon} aria-hidden="true">
+    {currentPlantFact.icon}
+  </div>
+
+  <div>
+    <p className={styles.funFactLabel}>
+      {sprouts === 0 ? "Next sprout reward" : `Sprout ${sprouts} fact`}
+    </p>
+
+    <p className={styles.funFactText}>
+      {currentPlantFact.text}
+    </p>
+  </div>
+</section>
+
         <div className={styles.sectionHeading}>
           <h2>Today&apos;s Carolina quests</h2>
-
           <span>
             {allQuestsComplete
               ? "Quest pool complete!"
@@ -310,18 +374,6 @@ export default function TouchGrassApp() {
             </p>
           </div>
         )}
-
-        <div className="sprout-app-bar">
-          <SendToSproutButton
-            appId="touchgrass"
-            text={
-              activeQuests.length > 0
-                ? "Which of my quests should I do for my break?"
-                : "I finished every quest! What should I do next?"
-            }
-            context={`TouchGrass quests. Garden score: ${gardenScore} pts. Completed: ${completedCount}. Active quests: ${activeQuests.length > 0 ? activeQuests.map((quest) => `${quest.title} (+${quest.points} pts) - ${quest.description}`).join("; ") : "none"}.`}
-          />
-        </div>
 
         <footer className={styles.footer}>
           <span aria-hidden="true">✦</span>

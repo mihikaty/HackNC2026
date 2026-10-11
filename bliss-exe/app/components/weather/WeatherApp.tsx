@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { SendToSproutButton } from "@/components/sprout/SendToSproutButton";
+import { SendToSproutButton } from "@/app/components/sprout/SendToSproutButton";
 import {
   SPOTS,
   uvLabel,
