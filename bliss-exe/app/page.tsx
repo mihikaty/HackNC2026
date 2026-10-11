@@ -8,7 +8,7 @@ import ExploreApp from "@/app/components/explore/ExploreApp";
 import SproutApp from "@/app/components/sprout/SproutApp";
 import { SproutProvider } from "@/app/components/sprout/SproutProvider";
 import WeatherApp from "@/app/components/weather/WeatherApp";
-import Screensaver from "@/components/screensaver/Screensaver";
+import Screensaver from "@/app/components/screensaver/Screensaver";
 
 const PROGRAMS = [
   { id: "focus", name: "Focus.exe", icon: "⏱️", description: "Your personal study timer and task space.", next: "Build a focus timer, task list, and session history here." },
