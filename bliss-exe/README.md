@@ -64,7 +64,7 @@ Send Sprout an iMessage voice note and it transcribes it (ElevenLabs Speech to T
 
 ### Voice notes
 
-Sprout follows each reply with a voice note when `ELEVENLABS_API_KEY` is set in `agent/.env`. It is skipped for long replies and never delays or breaks the text reply. Set `SPROUT_VOICE=off` to turn it off, or `ELEVENLABS_VOICE_ID` to change the voice.
+Sprout follows each reply with a voice note when `ELEVENLABS_API_KEY` is set in `agent/.env`. Long replies are spoken up to the last full sentence that fits (about 450 characters), followed by "There's more in my text"; the full reply is always sent as text. A voice problem never delays or breaks the text reply. Set `SPROUT_VOICE=off` to turn it off, or `ELEVENLABS_VOICE_ID` to change the voice.
 
 ## Weather soundscapes
 
