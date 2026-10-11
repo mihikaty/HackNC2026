@@ -8,7 +8,7 @@ Welcome to ctrl + alt + study. In this desktop application there are a multitude
    We understand that everyone prefers a different studying environment, that's why we created Explore.exe. Through implementing a Campus Explorer of UNC Chapel Hill, users can virtually explore different study areas they otherwise may not have known about. With different types of environment such as, "Outdoor", "Library", or "Campus", users are sure to be able to find their new study habitat that best suits their individual studying needs.
 
 3. Nature.fm:
-   Of course a proper focus session requires the perfect ambiance. Introducing Nature.fm - a program that brings a little calm, on demand, through peaceful Frutiger Aero inspired sounds. This program is sure to immerse the user into a soundscape that fits the right studying/break vibe.
+   Of course, a proper focus session requires the perfect ambiance. Introducing Nature.fm - a program that brings a little calm, on demand, through peaceful Frutiger Aero inspired sounds. This program is sure to immerse the user into a soundscape that fits the right studying/break vibe.
 
 4. TouchGrass.exe:
    Need meaningful breaks that actually refreshes your mind? TouchGrass.exe is the perfect place to do so. TouchGrass.exe provides outdoor quests to do at UNC Chapel Hill. By completing quests the user accumulates points that goes toward their "Garden Score". Every 20 points a user accumulates they gain a sprout which unlocks a fun fact about the plants at UNC Chapel Hill. Through this quest reward system users are able to explore UNC Chapel Hill's natural stunning scenery while also learning the history behind it.
