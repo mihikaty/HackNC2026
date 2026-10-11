@@ -27,6 +27,7 @@ The site works without any keys. Features switch on as you add them.
 | Weather soundscapes in Nature.fm | `ELEVENLABS_API_KEY` (Sound Effects permission) | `bliss-exe/.env.local` |
 | Sprout over iMessage | `PHOTON_PROJECT_ID`, `PHOTON_PROJECT_SECRET`, `GEMINI_API_KEY` | `bliss-exe/agent/.env` |
 | Voice notes from Sprout | `ELEVENLABS_API_KEY` (Text to Speech permission) | `bliss-exe/agent/.env` |
+| Understanding voice notes sent to Sprout | `ELEVENLABS_API_KEY` (Speech to Text permission) | `bliss-exe/agent/.env` |
 | Weather, Explore, TouchGrass, Focus | nothing (weather uses the free Open-Meteo service) | |
 
 Two details that trip people up:
@@ -56,6 +57,10 @@ In **Sprout.exe**, open "Texts from Sprout" and enter your number (`+19195551234
 - Starting and finishing a Focus session texts you; the finish text also comes as a voice note.
 - Sending a study spot to Sprout from Explore texts you only if the weather is worth a warning (rain, heat, cold, wind, high UV, thunder).
 - **Read to me** on a TouchGrass quest texts you the quest and speaks it as a voice note.
+
+### Talking to Sprout by voice
+
+Send Sprout an iMessage voice note and it transcribes it (ElevenLabs Speech to Text; the key needs that permission), answers like it would a typed message, and replies with text plus a voice note. If it can't make out the audio it asks you to try again. The agent logs `Voice note transcript: ...` so you can see what it heard. Set `SPROUT_VOICE_IN=off` to turn this off.
 
 ### Voice notes
 
