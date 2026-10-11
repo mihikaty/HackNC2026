@@ -5,6 +5,8 @@ import { FocusApp } from "@/components/FocusApp";
 import NatureFmApp from "@/components/NatureFM";
 import TouchGrassApp from "@/components/Touching/TouchGrassApp";
 import ExploreApp from "@/app/components/explore/ExploreApp";
+import SproutApp from "@/components/sprout/SproutApp";
+import { SproutProvider } from "@/components/sprout/SproutProvider";
 
 const PROGRAMS = [
   { id: "focus", name: "Focus.exe", icon: "⏱️", description: "Your personal study timer and task space.", next: "Build a focus timer, task list, and session history here." },
@@ -120,6 +122,7 @@ export default function Home() {
   }
 
   return (
+    <SproutProvider openSprout={() => openApp("sprout")}>
     <main className="desktop" data-theme={theme} onClick={() => setStartMenuOpen(false)}>
       <div className="sky" aria-hidden="true" />
       <header className="desktop-header"><div><div className="desktop-brand">B L I S S . E X E</div><div className="desktop-subtitle">A little more focus. A little more outside.</div></div><div className="desktop-status"><span className="status-dot" />YOUR LITTLE CORNER OF THE WORLD</div></header>
@@ -133,12 +136,13 @@ export default function Home() {
         const isActive = activeId === win.id;
         return <section key={win.id} className={`app-window resizable${isActive ? " active" : ""}${win.maximized ? " maximized" : ""}`} style={win.maximized ? { zIndex: win.zIndex } : { transform: `translate(${win.x}px, ${win.y}px)`, zIndex: win.zIndex, display: win.minimized ? "none" : "flex" }} onMouseDown={() => bringToFront(win.id)} aria-label={program.name}>
           <div className="window-titlebar" style={{ cursor: win.maximized ? "default" : "grab" }} onMouseDown={(event) => startDrag(event, win.id)} onDoubleClick={() => toggleMaximize(win.id)}><div className="window-title"><span>{program.icon}</span><span>{program.name}</span></div><div className="window-controls"><button className="window-control" onClick={(event) => { event.stopPropagation(); minimizeWindow(win.id); }} aria-label={`Minimize ${program.name}`} title="Minimize">─</button><button className="window-control" onClick={(event) => { event.stopPropagation(); toggleMaximize(win.id); }} aria-label={win.maximized ? `Restore ${program.name}` : `Maximize ${program.name}`} title={win.maximized ? "Restore" : "Maximize"}>{win.maximized ? "❐" : "□"}</button><button className="window-close" onClick={(event) => { event.stopPropagation(); closeApp(win.id); }} aria-label={`Close ${program.name}`} title="Close">×</button></div></div>
-          <div className="window-content">{win.id === "focus" ? <FocusApp /> : win.id === "nature" ? <NatureFmApp /> : win.id === "touchgrass" ? <TouchGrassApp /> : win.id === "explore" ? <ExploreApp /> : <><div className="program-hero-icon">{program.icon}</div><h2>{program.name}</h2><p className="program-description">{program.description}</p><div className="program-placeholder"><span className="placeholder-label">COMING TO THIS WINDOW</span><p>{program.next}</p></div>{win.id === "sprout" && <p className="sprout-note">Sprout&apos;s web chat and real iMessage connection will be added in the next development steps.</p>}</>}</div>
+          <div className="window-content">{win.id === "focus" ? <FocusApp /> : win.id === "nature" ? <NatureFmApp /> : win.id === "touchgrass" ? <TouchGrassApp /> : win.id === "explore" ? <ExploreApp /> : win.id === "sprout" ? <SproutApp /> : <><div className="program-hero-icon">{program.icon}</div><h2>{program.name}</h2><p className="program-description">{program.description}</p><div className="program-placeholder"><span className="placeholder-label">COMING TO THIS WINDOW</span><p>{program.next}</p></div></>}</div>
         </section>;
       })}
 
       {startMenuOpen && <section className="start-menu" aria-label="Start menu" onClick={(event) => event.stopPropagation()}><div className="start-menu-header"><div className="start-avatar">🌿</div><div><strong>Welcome to Bliss</strong><span>Your study space</span></div></div><div className="start-menu-list">{PROGRAMS.map((program) => <button key={program.id} className="start-menu-item" onClick={() => openApp(program.id)}><span>{program.icon}</span>{program.name}</button>)}</div><div className="start-menu-footer">Take a breath. You&apos;re doing fine.</div></section>}
       <footer className="taskbar" onClick={(event) => event.stopPropagation()}><button className="start-button" onClick={() => setStartMenuOpen((current) => !current)} aria-expanded={startMenuOpen}><span className="start-orb">✿</span>Start</button><div className="taskbar-divider" /><div className="taskbar-apps">{windows.map((win) => { const program = PROGRAMS.find((item) => item.id === win.id)!; return <button key={win.id} className={`taskbar-app${activeId === win.id && !win.minimized ? " taskbar-app-active" : ""}`} onClick={() => handleTaskbarClick(win.id)} title={program.name}>{program.icon} {program.name}</button>; })}</div><div className="taskbar-spacer" /><button className="theme-toggle" onClick={() => setTheme((current) => current === "day" ? "night" : "day")} title="Switch day and night modes">{theme === "day" ? "☀ Day" : "☾ Night"}</button><div className="system-clock">{clock}</div></footer>
     </main>
+    </SproutProvider>
   );
 }

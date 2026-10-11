@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { SendToSproutButton } from "@/components/sprout/SendToSproutButton";
 
 const PRESETS = [25, 50];
 
@@ -130,6 +131,20 @@ export function FocusApp() {
         <button className="focus-secondary" onClick={resetTimer}>
           Reset
         </button>
+      </div>
+
+      <div className="sprout-app-bar">
+        <SendToSproutButton
+          appId="focus"
+          text={
+            completed
+              ? "I just finished a focus session. What should I do next?"
+              : task.trim()
+                ? "Can you help me break this task into steps?"
+                : "Can you help me figure out what to focus on?"
+          }
+          context={`Focus timer. Task: ${task.trim() || "(none entered)"}. Session length: ${duration} minutes. Time left: ${minutes}m ${seconds}s. ${completed ? "Session just completed." : running ? "Timer is running." : "Timer is not running."}`}
+        />
       </div>
 
       {completed && (

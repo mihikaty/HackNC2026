@@ -7,6 +7,7 @@ import {
   useState,
   type ChangeEvent,
 } from "react";
+import { SendToSproutButton } from "@/components/sprout/SendToSproutButton";
 
 const TRACKS = [
   {
@@ -461,6 +462,14 @@ export default function NatureFmApp() {
             />
           </label>
         </div>
+      </div>
+
+      <div className="sprout-app-bar">
+        <SendToSproutButton
+          appId="nature"
+          text="Which nature sound should I study to?"
+          context={`Nature.fm. Current track: "${currentTrack.title}" (${isPlaying ? "playing" : "paused"}). Available tracks: ${TRACKS.map((track) => track.title).join(", ")}. Looping: ${isLooping ? "on" : "off"}.`}
+        />
       </div>
 
       <aside className="nature-session-notes">
